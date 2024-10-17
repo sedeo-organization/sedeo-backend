@@ -13,7 +13,8 @@
 	<modules>
 		<module>main-web</module>
 		<module>user</module>
-	</modules>
+        <module>common</module>
+    </modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -27,15 +28,24 @@
 		<h2.version>2.3.232</h2.version>
 		<postgresql.version>42.7.4</postgresql.version>
 		<liquibase-core.version>4.29.2</liquibase-core.version>
+        <spring-context.version>6.1.13</spring-context.version>
+		<vavr.version>0.10.4</vavr.version>
+		<mapstruct.version>1.6.2</mapstruct.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<spring-jdbc.version>6.1.13</spring-jdbc.version>
 	</properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+	</dependencies>
 
 </project>

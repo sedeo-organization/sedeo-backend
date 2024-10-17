@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00_init_reception_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: user_user
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: text
+              - column:
+                  name: last_name
+                  type: text
+              - column:
+                  name: phone_number
+                  type: text
+              - column:
+                  name: email
+                  type: text
+              - column:
+                  name: password
+                  type: text
+              - column:
+                  name: account_balance
+                  type: decimal(10,2)
+  - changeSet:
+      id: 00_init_example_user_data
+      author: dabkowski
+      context: dev
+      changes:
+        - insert:
+            tableName: user_user
+            columns:
+              - column:
+                  name: user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"
+              - column:
+                  name: first_name
+                  value: "John"
+              - column:
+                  name: last_name
+                  value: "Doe"
+              - column:
+                  name: phone_number
+                  value: "+1234567890"
+              - column:
+                  name: email
+                  value: "johndoe@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$X0U98eN9uqPU2lbwyYujU.D4PMVhXz/zSKXsl8ksrTswvT.qkUrP6" #password123
+              - column:
+                  name: account_balance
+                  value: 0
