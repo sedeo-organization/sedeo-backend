@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02_init_friend_invitation_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: user_friend_invitation
+            columns:
+              - column:
+                  name: inviting_user_id
+                  type: uuid
+              - column:
+                  name: requested_user_id
+                  type: uuid
+  - changeSet:
+      id: 02_init_example_friend_invitation_data
+      author: dabkowski
+      context: dev
+      changes:
+        - insert:
+            tableName: user_friend_invitation
+            columns:
+              - column:
+                  name: inviting_user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"
+              - column:
+                  name: requested_user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e657d"
