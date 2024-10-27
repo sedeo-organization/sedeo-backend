@@ -5,12 +5,13 @@ import com.sedeo.user.db.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 @Configuration
 public class UserRepositoryConfiguration {
 
     @Bean
-    UserRepository userRepository(JdbcTemplate jdbcTemplate) {
-        return new UserJdbcRepository(jdbcTemplate);
+    UserRepository userRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcOperations namedParameterJdbcOperations) {
+        return new UserJdbcRepository(jdbcTemplate, namedParameterJdbcOperations);
     }
 }

@@ -59,3 +59,51 @@ databaseChangeLog:
               - column:
                   name: account_balance
                   value: 0
+        - insert:
+            tableName: user_user
+            columns:
+              - column:
+                  name: user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e658d"
+              - column:
+                  name: first_name
+                  value: "Adam"
+              - column:
+                  name: last_name
+                  value: "Savage"
+              - column:
+                  name: phone_number
+                  value: "+48567543345"
+              - column:
+                  name: email
+                  value: "adam@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$X0U98eN9uqPU2lbwyYujU.D4PMVhXz/zSKXsl8ksrTswvT.qkUrP6" #password123
+              - column:
+                  name: account_balance
+                  value: 100
+        - insert:
+            tableName: user_user
+            columns:
+              - column:
+                  name: user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e657d"
+              - column:
+                  name: first_name
+                  value: "Leonardo"
+              - column:
+                  name: last_name
+                  value: "Kalami"
+              - column:
+                  name: phone_number
+                  value: "+48513234567"
+              - column:
+                  name: email
+                  value: "leonardo@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$X0U98eN9uqPU2lbwyYujU.D4PMVhXz/zSKXsl8ksrTswvT.qkUrP6" #password123
+              - column:
+                  name: account_balance
+                  value: 256
