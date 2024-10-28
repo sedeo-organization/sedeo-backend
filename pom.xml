@@ -24,7 +24,7 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<spring-boot-starter-web.version>3.3.4</spring-boot-starter-web.version>
+		<spring-boot-starter-web.version>3.3.5</spring-boot-starter-web.version>
 		<h2.version>2.3.232</h2.version>
 		<postgresql.version>42.7.4</postgresql.version>
 		<liquibase-core.version>4.29.2</liquibase-core.version>
