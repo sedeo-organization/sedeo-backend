@@ -1,8 +1,11 @@
 package com.sedeo.user.db;
 
+import com.sedeo.common.error.DatabaseError.DatabaseWriteUnsuccessfulError;
 import com.sedeo.common.error.DatabaseError.DatabaseReadUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.user.db.mapper.FriendInvitationMapper;
 import com.sedeo.user.db.mapper.UserMapper;
+import com.sedeo.user.db.model.FriendInvitationEntity;
 import com.sedeo.user.db.model.UserEntity;
 import com.sedeo.user.db.queries.Query;
 import io.vavr.control.Either;
@@ -18,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.sedeo.user.db.queries.Query.SAVE_FRIEND_INVITATION;
+import static java.lang.Boolean.TRUE;
 import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
 public class UserJdbcRepository implements UserRepository {
 
     private static final UserMapper USER_MAPPER = new UserMapper();
+    private static final FriendInvitationMapper FRIEND_INVITATION_MAPPER = new FriendInvitationMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(UserJdbcRepository.class);
 
     private final JdbcTemplate jdbcTemplate;
@@ -60,9 +66,51 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId) {
-        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATION_BY_USER_ID, USER_MAPPER, userId))
+        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, userId))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, List<UserEntity>> findUsersPotentialFriends(UUID userId, String searchPhrase) {
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(Query.CURRENT_USER_ID_PARAMETER, userId,
+                Query.SEARCH_PHRASE_PARAMETER, "%" + searchPhrase + "%"));
+        return Try.of(() -> namedParameterJdbcOperations.query(Query.POTENTIAL_FRIENDS_BY_SEARCH_PHRASE, parameters, USER_MAPPER))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Boolean friendsExist(UUID firstUserId, UUID secondUserId) {
+        return TRUE.equals(jdbcTemplate.queryForObject(Query.FRIENDS_EXIST_BY_IDS, Boolean.class, firstUserId, secondUserId, secondUserId, firstUserId));
+    }
+
+    @Override
+    public Either<GeneralError, FriendInvitationEntity> findFriendInvitation(UUID invitingUserId, UUID requestedUserId, FriendInvitationEntity.InvitationStatus invitationStatus) {
+        return Try.of(() -> singleResult(jdbcTemplate.query(Query.FRIEND_INVITATION_BY_USER_IDS, FRIEND_INVITATION_MAPPER,
+                        invitingUserId, requestedUserId, invitationStatus.toString())))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, FriendInvitationEntity> saveFriendInvitation(FriendInvitationEntity friendInvitationEntity) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_FRIEND_INVITATION,
+                friendInvitationEntity.invitingUserId(),
+                friendInvitationEntity.requestedUserId(),
+                friendInvitationEntity.invitationStatus().toString())
+        ).onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .onSuccess(success -> LOGGER.info("Friend invitation created for inviting user {} and recipient {}", friendInvitationEntity.invitingUserId(), friendInvitationEntity.requestedUserId()))
+                .toEither()
+                .map(result -> friendInvitationEntity)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
+    public Boolean friendInvitationExists(UUID invitingUser, UUID requestedUserId) {
+        return TRUE.equals(jdbcTemplate.queryForObject(Query.FRIEND_INVITATION_EXISTS_BY_IDS, Boolean.class, invitingUser, requestedUserId));
     }
 }

@@ -12,6 +12,9 @@ databaseChangeLog:
               - column:
                   name: requested_user_id
                   type: uuid
+              - column:
+                  name: invitation_status
+                  type: text
   - changeSet:
       id: 02_init_example_friend_invitation_data
       author: dabkowski
@@ -26,3 +29,6 @@ databaseChangeLog:
               - column:
                   name: requested_user_id
                   value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e657d"
+              - column:
+                  name: invitation_status
+                  value: "PENDING"

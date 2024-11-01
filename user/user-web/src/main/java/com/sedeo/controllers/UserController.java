@@ -1,10 +1,12 @@
 package com.sedeo.controllers;
 
+import com.sedeo.controllers.dto.CreateFriendInvitationRequest;
+import com.sedeo.controllers.dto.FetchPotentialFriendsRequest;
 import com.sedeo.controllers.dto.UserControllerMapper;
 import com.sedeo.user.facade.Users;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -42,6 +44,24 @@ public class UserController {
         return users.fetchFriendInvitationUsers(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d")).fold(
                 ResponseMapper::mapError,
                 invitingUsers -> ResponseEntity.ok(USER_CONTROLLER_MAPPER.usersToFetchFriendInvitationsResponse(invitingUsers))
+        );
+    }
+
+    @GetMapping("users/potential-friends")
+    public ResponseEntity<?> fetchUserPotentialFriends(@RequestParam(name = "search_phrase") FetchPotentialFriendsRequest fetchPotentialFriendsRequest) {
+        //TODO: Change UUID so that it is extracted from the token
+        return users.fetchUsersPotentialFriends(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"), fetchPotentialFriendsRequest.searchPhrase()).fold(
+                ResponseMapper::mapError,
+                potentialFriends -> ResponseEntity.ok(USER_CONTROLLER_MAPPER.usersToFetchPotentialFriendsResponse(potentialFriends))
+        );
+    }
+
+    @PostMapping("users/friend-requests")
+    public ResponseEntity<?> createFriendRequest(@RequestBody CreateFriendInvitationRequest createFriendInvitationRequest) {
+        //TODO: Change UUID so that it is extracted from the token
+        return users.createFriendInvitation(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"), createFriendInvitationRequest.recipientUserId()).fold(
+                ResponseMapper::mapError,
+                potentialFriends -> ResponseEntity.status(HttpStatus.CREATED).build()
         );
     }
 }

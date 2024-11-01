@@ -1,5 +1,6 @@
 package com.sedeo.user.model;
 
+import com.sedeo.user.db.model.FriendInvitationEntity;
 import com.sedeo.user.db.model.FriendshipEntity;
 import com.sedeo.user.db.model.UserEntity;
 import org.mapstruct.Mapper;
@@ -23,4 +24,6 @@ public interface UserMapper {
     Friendship friendshipEntityToFriendship(FriendshipEntity friendshipEntity);
 
     List<Friendship> friendshipEntityListToFriendshipList(List<FriendshipEntity> friendshipEntityList);
+
+    FriendInvitation friendInvitationEntityToFriendInvitation(FriendInvitationEntity friendInvitationEntity);
 }

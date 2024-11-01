@@ -12,12 +12,14 @@ public class FriendInvitationMapper implements RowMapper<FriendInvitationEntity>
     public FriendInvitationEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new FriendInvitationEntity(
                 (UUID) rs.getObject(Fields.INVITING_USER_ID),
-                (UUID) rs.getObject(Fields.REQUESTED_USER_ID)
+                (UUID) rs.getObject(Fields.REQUESTED_USER_ID),
+                FriendInvitationEntity.InvitationStatus.valueOf(rs.getString(Fields.INVITATION_STATUS))
         );
     }
 
     private static class Fields {
         private static final String INVITING_USER_ID = "inviting_user_id";
         private static final String REQUESTED_USER_ID = "requested_user_id";
+        private static final String INVITATION_STATUS = "invitation_status";
     }
 }

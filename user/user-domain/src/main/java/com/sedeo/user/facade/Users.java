@@ -1,6 +1,7 @@
 package com.sedeo.user.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.user.model.FriendInvitation;
 import com.sedeo.user.model.User;
 import io.vavr.control.Either;
 
@@ -14,4 +15,8 @@ public interface Users {
     Either<GeneralError, List<User>> fetchFriends(UUID userId);
 
     Either<GeneralError, List<User>> fetchFriendInvitationUsers(UUID userId);
+
+    Either<GeneralError, List<User>> fetchUsersPotentialFriends(UUID userId, String searchPhrase);
+
+    Either<GeneralError, FriendInvitation> createFriendInvitation(UUID invitingUserId, UUID recipientUserId);
 }
