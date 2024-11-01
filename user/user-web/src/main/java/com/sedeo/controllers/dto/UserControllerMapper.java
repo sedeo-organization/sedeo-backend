@@ -2,7 +2,6 @@ package com.sedeo.controllers.dto;
 
 import com.sedeo.user.model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -25,11 +24,20 @@ public interface UserControllerMapper {
 
     FetchFriendInvitationsResponse.InvitingUser userToFetchFriendInvitationsResponseInvitingUser(User user);
 
-    List<FetchFriendInvitationsResponse.InvitingUser> usersToFetchFriendInvitationsResponseInvitingUser(List<User> users);
+    List<FetchFriendInvitationsResponse.InvitingUser> usersToFetchFriendInvitationsResponseInvitingUsers(List<User> users);
 
     default FetchFriendInvitationsResponse usersToFetchFriendInvitationsResponse(List<User> users) {
-        List<FetchFriendInvitationsResponse.InvitingUser> invitingUsers = usersToFetchFriendInvitationsResponseInvitingUser(users);
+        List<FetchFriendInvitationsResponse.InvitingUser> invitingUsers = usersToFetchFriendInvitationsResponseInvitingUsers(users);
         return new FetchFriendInvitationsResponse(invitingUsers);
+    }
+
+    FetchPotentialFriendsResponse.PotentialFriend userToFetchPotentialFriendsResponsePotentialFriend(User user);
+
+    List<FetchPotentialFriendsResponse.PotentialFriend> usersToFetchPotentialFriendsResponsePotentialFriends(List<User> users);
+
+    default FetchPotentialFriendsResponse usersToFetchPotentialFriendsResponse(List<User> users) {
+        List<FetchPotentialFriendsResponse.PotentialFriend> potentialFriends = usersToFetchPotentialFriendsResponsePotentialFriends(users);
+        return new FetchPotentialFriendsResponse(potentialFriends);
     }
 
 }
