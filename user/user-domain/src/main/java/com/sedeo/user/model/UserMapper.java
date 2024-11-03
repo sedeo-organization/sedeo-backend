@@ -26,4 +26,6 @@ public interface UserMapper {
     List<Friendship> friendshipEntityListToFriendshipList(List<FriendshipEntity> friendshipEntityList);
 
     FriendInvitation friendInvitationEntityToFriendInvitation(FriendInvitationEntity friendInvitationEntity);
+
+    FriendInvitationEntity friendInvitationToFriendInvitationEntity(FriendInvitation friendInvitation);
 }

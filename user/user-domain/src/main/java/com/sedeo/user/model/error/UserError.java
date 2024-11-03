@@ -7,6 +7,7 @@ public interface UserError extends DomainError {
     String USER_WAS_NOT_FOUND = "User was not found";
     String FRIENDS_ALREADY_EXIST = "Friends already exist";
     String FRIEND_INVITATION_IS_PENDING = "Friend invitation is pending";
+    String FRIEND_INVITATION_STATUS_CHANGE_NOT_ALLOWED = "Friend invitation status change is not allowed";
 
     record UserNotFoundError(String message) implements UserError {
         public UserNotFoundError() {
@@ -23,6 +24,12 @@ public interface UserError extends DomainError {
     record FriendInvitationIsPending(String message) implements UserError {
         public FriendInvitationIsPending() {
             this(FRIEND_INVITATION_IS_PENDING);
+        }
+    }
+
+    record FriendInvitationStatusChangeNotAllowed(String message) implements UserError {
+        public FriendInvitationStatusChangeNotAllowed() {
+            this(FRIEND_INVITATION_STATUS_CHANGE_NOT_ALLOWED);
         }
     }
 }
