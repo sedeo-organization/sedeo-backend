@@ -1,9 +1,11 @@
 package com.sedeo.controllers;
 
+import com.sedeo.controllers.dto.ChangeFriendInvitationStatus;
 import com.sedeo.controllers.dto.CreateFriendInvitationRequest;
 import com.sedeo.controllers.dto.FetchPotentialFriendsRequest;
 import com.sedeo.controllers.dto.UserControllerMapper;
 import com.sedeo.user.facade.Users;
+import com.sedeo.user.model.InvitationStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +64,17 @@ public class UserController {
         return users.createFriendInvitation(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"), createFriendInvitationRequest.recipientUserId()).fold(
                 ResponseMapper::mapError,
                 potentialFriends -> ResponseEntity.status(HttpStatus.CREATED).build()
+        );
+    }
+
+    @PatchMapping("users/friend-requests")
+    public ResponseEntity<?> acceptOrRejectFriendInvitation(@RequestBody ChangeFriendInvitationStatus changeFriendInvitationStatus) {
+        //TODO: Change UUID so that it is extracted from the token
+        return users.changeFriendInvitationStatus(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"),
+                changeFriendInvitationStatus.invitingUserId(),
+                InvitationStatus.valueOf(changeFriendInvitationStatus.status().toString())).fold(
+                        ResponseMapper::mapError,
+                        potentialFriends -> ResponseEntity.status(HttpStatus.CREATED).build()
         );
     }
 }

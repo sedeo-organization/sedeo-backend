@@ -6,6 +6,7 @@ import com.sedeo.common.error.GeneralError;
 import com.sedeo.user.db.mapper.FriendInvitationMapper;
 import com.sedeo.user.db.mapper.UserMapper;
 import com.sedeo.user.db.model.FriendInvitationEntity;
+import com.sedeo.user.db.model.FriendshipEntity;
 import com.sedeo.user.db.model.UserEntity;
 import com.sedeo.user.db.queries.Query;
 import io.vavr.control.Either;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.sedeo.user.db.queries.Query.SAVE_FRIEND_INVITATION;
+import static com.sedeo.user.db.queries.Query.*;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
@@ -65,8 +66,8 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId) {
-        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, userId))
+    public Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId, FriendInvitationEntity.InvitationStatus invitationStatus) {
+        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, userId, invitationStatus.toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -99,10 +100,10 @@ public class UserJdbcRepository implements UserRepository {
     @Override
     public Either<GeneralError, FriendInvitationEntity> saveFriendInvitation(FriendInvitationEntity friendInvitationEntity) {
         return Try.of(() -> jdbcTemplate.update(SAVE_FRIEND_INVITATION,
-                friendInvitationEntity.invitingUserId(),
-                friendInvitationEntity.requestedUserId(),
-                friendInvitationEntity.invitationStatus().toString())
-        ).onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                        friendInvitationEntity.invitingUserId(),
+                        friendInvitationEntity.requestedUserId(),
+                        friendInvitationEntity.invitationStatus().toString()))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .onSuccess(success -> LOGGER.info("Friend invitation created for inviting user {} and recipient {}", friendInvitationEntity.invitingUserId(), friendInvitationEntity.requestedUserId()))
                 .toEither()
                 .map(result -> friendInvitationEntity)
@@ -112,5 +113,30 @@ public class UserJdbcRepository implements UserRepository {
     @Override
     public Boolean friendInvitationExists(UUID invitingUser, UUID requestedUserId) {
         return TRUE.equals(jdbcTemplate.queryForObject(Query.FRIEND_INVITATION_EXISTS_BY_IDS, Boolean.class, invitingUser, requestedUserId));
+    }
+
+    @Override
+    public Either<GeneralError, FriendInvitationEntity> updateFriendInvitation(FriendInvitationEntity friendInvitationEntity) {
+        return Try.of(() -> jdbcTemplate.update(UPDATE_FRIEND_INVITATION,
+                        friendInvitationEntity.invitingUserId(),
+                        friendInvitationEntity.requestedUserId(),
+                        friendInvitationEntity.invitationStatus().toString(),
+                        friendInvitationEntity.invitingUserId(),
+                        friendInvitationEntity.requestedUserId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> friendInvitationEntity)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, FriendshipEntity> createFriendship(FriendshipEntity friendshipEntity) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_FRIENDSHIP,
+                        friendshipEntity.firstUserId(),
+                        friendshipEntity.secondUserId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> friendshipEntity)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
     }
 }
