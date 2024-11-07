@@ -14,7 +14,8 @@
 		<module>main-web</module>
 		<module>user</module>
         <module>common</module>
-    </modules>
+        <module>settlement</module>
+	</modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
