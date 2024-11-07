@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00_init_settlement_group_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: settlement_group
+            columns:
+              - column:
+                  name: group_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: text
+  - changeSet:
+      id: 00_init_example_settlement_group_data
+      author: dabkowski
+      context: dev
+      changes:
+        - insert:
+            tableName: settlement_group
+            columns:
+              - column:
+                  name: group_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede61e642d"
+              - column:
+                  name: title
+                  value: "Wakacje w Berlinie"
+        - insert:
+            tableName: settlement_group
+            columns:
+              - column:
+                  name: group_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede61e644d"
+              - column:
+                  name: title
+                  value: "Wakacje w Paryżu"
