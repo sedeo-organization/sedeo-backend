@@ -8,4 +8,7 @@ public class SettlementGroupQuery {
 
     public static final String FIND_GROUPS_BY_GROUP_IDS = "SELECT * FROM %s WHERE group_id IN (:%s)"
             .formatted(SETTLEMENT_GROUP_TABLE, GROUP_IDS_PARAMETER);
+
+    public static final String SAVE_SETTLEMENT_GROUP = "INSERT INTO %s VALUES(?, ?)"
+            .formatted(SETTLEMENT_GROUP_TABLE);
 }

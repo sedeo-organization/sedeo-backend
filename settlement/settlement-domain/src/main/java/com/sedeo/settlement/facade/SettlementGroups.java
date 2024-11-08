@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface SettlementGroups {
 
     Either<GeneralError, List<SettlementGroup>> fetchSettlementGroups(UUID userId, List<SettlementStatus> statuses);
+
+    Either<GeneralError, Void> createSettlementGroup(UUID groupId, UUID userId, String title);
 }

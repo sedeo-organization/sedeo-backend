@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface SettlementGroupRepository {
 
     Either<GeneralError, List<SettlementGroup>> findUsersSettlementGroups(List<UUID> groupIds);
+
+    Either<GeneralError, SettlementGroup> save(SettlementGroup settlementGroup);
 }

@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ParticipantRepository {
 
     Either<GeneralError, List<UUID>> findGroupIdsThatParticipantBelongsTo(UUID userId, List<SettlementStatus> statuses);
+
+    Either<GeneralError, Participant> save(Participant participant);
 }
