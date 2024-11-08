@@ -1,12 +1,15 @@
 package com.sedeo.settlement.db;
 
 import com.sedeo.common.error.DatabaseError.DatabaseReadUnsuccessfulError;
+import com.sedeo.common.error.DatabaseError.DatabaseWriteUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.SettlementStatus;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -20,11 +23,13 @@ import static com.sedeo.settlement.db.queries.ParticipantQuery.*;
 public class ParticipantJdbcRepository implements ParticipantRepository {
 
     private final NamedParameterJdbcOperations namedParameterJdbcOperations;
+    private final JdbcTemplate jdbcTemplate;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ParticipantJdbcRepository.class);
 
-    public ParticipantJdbcRepository(NamedParameterJdbcOperations namedParameterJdbcOperations) {
+    public ParticipantJdbcRepository(NamedParameterJdbcOperations namedParameterJdbcOperations, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcOperations = namedParameterJdbcOperations;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -38,5 +43,14 @@ public class ParticipantJdbcRepository implements ParticipantRepository {
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, Participant> save(Participant participant) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_PARTICIPANT, participant.groupId(), participant.userId(), participant.status().toString()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> participant)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
     }
 }
