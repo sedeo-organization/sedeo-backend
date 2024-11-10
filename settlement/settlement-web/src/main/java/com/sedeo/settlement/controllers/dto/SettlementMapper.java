@@ -1,7 +1,10 @@
 package com.sedeo.settlement.controllers.dto;
 
+import com.sedeo.settlement.model.Exchange;
+import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementGroup;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -19,4 +22,11 @@ public interface SettlementMapper {
         List<FetchSettlementGroupsResponse.SettlementGroup> settlementGroupList = settlementGroupsToFetchSettlementGroupResponseSettlementGroups(settlementGroups);
         return new FetchSettlementGroupsResponse(settlementGroupList);
     }
+
+    Exchange createSettlementRequestExchangeToExchange(CreateSingleSettlementRequest.SettlementExchange settlementExchange);
+
+    List<Exchange> createSettlementRequestExchangeListToExchangeList(List<CreateSingleSettlementRequest.SettlementExchange> settlementExchanges);
+
+    @Mapping(source = "settlementExchanges", target = "exchanges")
+    Settlement createSettlementRequestToSettlement(CreateSingleSettlementRequest createSingleSettlementRequest);
 }

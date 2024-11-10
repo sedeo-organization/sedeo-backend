@@ -1,9 +1,6 @@
 package com.sedeo.settlement.db.configuration;
 
-import com.sedeo.settlement.db.ParticipantJdbcRepository;
-import com.sedeo.settlement.db.ParticipantRepository;
-import com.sedeo.settlement.db.SettlementGroupJdbcRepository;
-import com.sedeo.settlement.db.SettlementGroupRepository;
+import com.sedeo.settlement.db.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,5 +17,15 @@ public class RepositoryConfiguration {
     @Bean
     ParticipantRepository settlementParticipantRepository(NamedParameterJdbcOperations namedParameterJdbcOperations, JdbcTemplate jdbcTemplate) {
         return new ParticipantJdbcRepository(namedParameterJdbcOperations, jdbcTemplate);
+    }
+
+    @Bean
+    ExchangeRepository exchangeRepository(JdbcTemplate jdbcTemplate) {
+        return new ExchangeJdbcRepository(jdbcTemplate);
+    }
+
+    @Bean
+    SettlementRepository settlementRepository(JdbcTemplate jdbcTemplate, ExchangeRepository exchangeRepository) {
+        return new SettlementJdbcRepository(jdbcTemplate, exchangeRepository);
     }
 }
