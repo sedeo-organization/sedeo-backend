@@ -62,6 +62,14 @@ public class SettlementController {
                 );
     }
 
+    @GetMapping("/settlement-groups/{groupId}/settlements")
+    public ResponseEntity<?> fetchSettlements(@PathVariable("groupId") UUID groupId) {
+        return settlements.fetchSettlements(groupId).fold(
+                ResponseMapper::mapError,
+                settlements -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.simpleSettlementsToFetchSettlementsResponse(settlements))
+        );
+    }
+
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
         if (Objects.equals(status, SettlementStatus.PENDING.name().toLowerCase())) {
             return List.of(SettlementStatus.PENDING);

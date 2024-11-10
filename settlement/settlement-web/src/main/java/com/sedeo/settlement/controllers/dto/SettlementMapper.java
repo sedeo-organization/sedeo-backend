@@ -3,6 +3,7 @@ package com.sedeo.settlement.controllers.dto;
 import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementGroup;
+import com.sedeo.settlement.model.SimpleSettlement;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -29,4 +30,13 @@ public interface SettlementMapper {
 
     @Mapping(source = "settlementExchanges", target = "exchanges")
     Settlement createSettlementRequestToSettlement(CreateSingleSettlementRequest createSingleSettlementRequest);
+
+    FetchSettlementsResponse.Settlement simpleSettlementToFetchSettlementResponseSettlement(SimpleSettlement settlement);
+
+    List<FetchSettlementsResponse.Settlement> simpleSettlementsToFetchSettlementsList(List<SimpleSettlement> settlements);
+
+    default FetchSettlementsResponse simpleSettlementsToFetchSettlementsResponse(List<SimpleSettlement> settlements) {
+        List<FetchSettlementsResponse.Settlement> fetchSettlementResponseSettlements = simpleSettlementsToFetchSettlementsList(settlements);
+        return new FetchSettlementsResponse(fetchSettlementResponseSettlements);
+    }
 }

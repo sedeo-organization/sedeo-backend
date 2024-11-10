@@ -1,4 +1,4 @@
-package com.sedeo.settlement.db;
+package com.sedeo.settlement.db.modelmapper;
 
 import com.sedeo.settlement.db.model.SettlementGroupEntity;
 import com.sedeo.settlement.model.SettlementGroup;
@@ -8,9 +8,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface SettlementMapper {
+public interface SettlementGroupMapper {
 
-    SettlementMapper INSTANCE = Mappers.getMapper(SettlementMapper.class);
+    SettlementGroupMapper INSTANCE = Mappers.getMapper(SettlementGroupMapper.class);
 
     SettlementGroup settlementGroupEntityToSettlementGroup(SettlementGroupEntity settlementGroupEntity);
 
