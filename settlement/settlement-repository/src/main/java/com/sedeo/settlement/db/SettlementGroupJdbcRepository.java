@@ -3,7 +3,7 @@ package com.sedeo.settlement.db;
 import com.sedeo.common.error.DatabaseError.DatabaseWriteUnsuccessfulError;
 import com.sedeo.common.error.DatabaseError.DatabaseReadUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.settlement.db.mapper.SettlementGroupMapper;
+import com.sedeo.settlement.db.modelmapper.SettlementGroupMapper;
 import com.sedeo.settlement.model.SettlementGroup;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -26,8 +26,8 @@ public class SettlementGroupJdbcRepository implements SettlementGroupRepository 
     private final JdbcTemplate jdbcTemplate;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettlementGroupJdbcRepository.class);
-    private static final SettlementGroupMapper SETTLEMENT_GROUP_MAPPER = new SettlementGroupMapper();
-    private static final SettlementMapper SETTLEMENT_MAPPER = SettlementMapper.INSTANCE;
+    private static final com.sedeo.settlement.db.mapper.SettlementGroupMapper SETTLEMENT_GROUP_MAPPER = new com.sedeo.settlement.db.mapper.SettlementGroupMapper();
+    private static final SettlementGroupMapper SETTLEMENT_MAPPER = SettlementGroupMapper.INSTANCE;
 
     public SettlementGroupJdbcRepository(NamedParameterJdbcOperations namedParameterJdbcOperations, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcOperations = namedParameterJdbcOperations;
