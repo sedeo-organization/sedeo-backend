@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02_init_exchange_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: settlement_exchange
+            columns:
+              - column:
+                  name: exchange_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: settlement_id
+                  type: uuid
+              - column:
+                  name: group_id
+                  type: uuid
+              - column:
+                  name: debtor_user_id
+                  type: uuid
+              - column:
+                  name: creditor_user_id
+                  type: uuid
+              - column:
+                  name: value
+                  type: decimal(10,2)

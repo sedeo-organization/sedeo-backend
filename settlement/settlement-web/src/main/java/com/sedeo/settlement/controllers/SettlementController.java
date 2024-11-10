@@ -1,8 +1,11 @@
 package com.sedeo.settlement.controllers;
 
 import com.sedeo.settlement.controllers.dto.CreateSettlementGroupRequest;
+import com.sedeo.settlement.controllers.dto.CreateSingleSettlementRequest;
 import com.sedeo.settlement.controllers.dto.SettlementMapper;
 import com.sedeo.settlement.facade.SettlementGroups;
+import com.sedeo.settlement.facade.Settlements;
+import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +15,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
 public class SettlementController {
 
     private static final SettlementMapper SETTLEMENT_MAPPER = SettlementMapper.INSTANCE;
 
     private final SettlementGroups settlementGroups;
+    private final Settlements settlements;
 
-    public SettlementController(SettlementGroups settlementGroups) {
+    public SettlementController(SettlementGroups settlementGroups, Settlements settlements) {
         this.settlementGroups = settlementGroups;
+        this.settlements = settlements;
     }
 
     @GetMapping("/settlement-groups")
@@ -42,8 +49,17 @@ public class SettlementController {
                 createSettlementGroupRequest.title()
         ).fold(
                 ResponseMapper::mapError,
-                settlementGroups -> ResponseEntity.status(HttpStatus.CREATED).build()
+                settlementGroups -> ResponseEntity.status(CREATED).build()
         );
+    }
+
+    @PostMapping("/settlement-groups/{groupId}/settlements")
+    public ResponseEntity<?> createSingleSettlement(@RequestBody CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId) {
+        return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), groupId)
+                .fold(
+                        ResponseMapper::mapError,
+                        success -> ResponseEntity.status(CREATED).build()
+                );
     }
 
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
