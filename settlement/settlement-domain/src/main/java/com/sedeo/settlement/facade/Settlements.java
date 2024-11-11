@@ -1,6 +1,7 @@
 package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SimpleSettlement;
 import io.vavr.control.Either;
@@ -13,4 +14,6 @@ public interface Settlements {
     Either<GeneralError, Void> createSettlement(Settlement settlement, UUID groupId);
 
     Either<GeneralError, List<SimpleSettlement>> fetchSettlements(UUID groupId);
+
+    Either<GeneralError, Settlement> fetchSettlementDetails(UUID settlementId);
 }

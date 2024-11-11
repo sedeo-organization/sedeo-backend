@@ -2,6 +2,7 @@ package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.settlement.db.SettlementRepository;
+import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SimpleSettlement;
 import io.vavr.control.Either;
@@ -26,6 +27,11 @@ public class SettlementsFacade implements Settlements {
     @Override
     public Either<GeneralError, List<SimpleSettlement>> fetchSettlements(UUID groupId) {
         return settlementRepository.find(groupId);
+    }
+
+    @Override
+    public Either<GeneralError, Settlement> fetchSettlementDetails(UUID settlementId) {
+        return settlementRepository.findSettlement(settlementId);
     }
 
 }

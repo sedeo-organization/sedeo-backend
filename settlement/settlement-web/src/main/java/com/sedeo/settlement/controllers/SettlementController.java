@@ -70,6 +70,14 @@ public class SettlementController {
         );
     }
 
+    @GetMapping("/settlements/{settlementId}")
+    public ResponseEntity<?> fetchSettlementDetails(@PathVariable("settlementId") UUID settlementId) {
+        return settlements.fetchSettlementDetails(settlementId).fold(
+                ResponseMapper::mapError,
+                settlementDetails -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.settlementToFetchSettlementDetailsResponse(settlementDetails))
+        );
+    }
+
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
         if (Objects.equals(status, SettlementStatus.PENDING.name().toLowerCase())) {
             return List.of(SettlementStatus.PENDING);
