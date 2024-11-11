@@ -9,4 +9,7 @@ public class SettlementQuery {
 
     public static final String SETTLEMENTS_BY_GROUP_ID = "SELECT * FROM %s WHERE group_id = ?"
             .formatted(SETTLEMENT_TABLE);
+
+    public static final String SETTLEMENT_BY_SETTLEMENT_ID = "SELECT * FROM %s WHERE settlement_id = ?"
+            .formatted(SETTLEMENT_TABLE);
 }

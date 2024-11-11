@@ -33,7 +33,7 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
 
     @Override
     public Either<GeneralError, List<Exchange>> save(List<Exchange> exchanges, UUID groupId, UUID settlementId) {
-        return Either.sequence(exchanges.stream().map(exchange -> this.save(exchange, groupId, settlementId)).toList())
+        return Either.sequence(exchanges.stream().map(exchange -> this.save(exchange, settlementId, groupId)).toList())
                 .map(savedExchanges -> exchanges)
                 .mapLeft(Traversable::head);
     }

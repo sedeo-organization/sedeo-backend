@@ -15,8 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.sedeo.settlement.db.queries.SettlementQuery.SAVE_SETTLEMENT;
-import static com.sedeo.settlement.db.queries.SettlementQuery.SETTLEMENTS_BY_GROUP_ID;
+import static com.sedeo.settlement.db.queries.SettlementQuery.*;
+import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
 public class SettlementJdbcRepository implements SettlementRepository {
 
@@ -49,5 +49,15 @@ public class SettlementJdbcRepository implements SettlementRepository {
                 .toEither()
                 .map(SETTLEMENT_MAPPER::settlementEntityListToSimpleSettlementList)
                 .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, Settlement> findSettlement(UUID settlementId) {
+        return Try.of(() -> singleResult(jdbcTemplate.query(SETTLEMENT_BY_SETTLEMENT_ID, SETTLEMENT_ENTITY_MAPPER, settlementId)))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .mapLeft(throwable -> (GeneralError) new DatabaseError.DatabaseReadUnsuccessfulError(throwable))
+                .flatMap(settlementEntity -> exchangeRepository.find(settlementId)
+                        .map(exchanges -> SETTLEMENT_MAPPER.settlementEntityToSettlement(settlementEntity, exchanges)));
     }
 }

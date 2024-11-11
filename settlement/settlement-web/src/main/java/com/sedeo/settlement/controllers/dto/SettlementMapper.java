@@ -39,4 +39,10 @@ public interface SettlementMapper {
         List<FetchSettlementsResponse.Settlement> fetchSettlementResponseSettlements = simpleSettlementsToFetchSettlementsList(settlements);
         return new FetchSettlementsResponse(fetchSettlementResponseSettlements);
     }
+
+    FetchSettlementDetailsResponse.SettlementExchange exchangeToFetchSettlementDetailsResponseSettlementExchange(Exchange exchange);
+
+    List<FetchSettlementDetailsResponse.SettlementExchange> exchangeListToFetchSettlementDetailsResponseSettlementExchangeList(List<Exchange> exchanges);
+
+    FetchSettlementDetailsResponse settlementToFetchSettlementDetailsResponse(Settlement settlement);
 }
