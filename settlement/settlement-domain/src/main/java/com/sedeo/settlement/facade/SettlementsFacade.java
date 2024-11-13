@@ -1,37 +1,94 @@
 package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.settlement.db.ParticipantRepository;
 import com.sedeo.settlement.db.SettlementRepository;
-import com.sedeo.settlement.model.Exchange;
+import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.Settlement;
-import com.sedeo.settlement.model.SimpleSettlement;
+import com.sedeo.settlement.model.error.SettlementGroupError.SettlementNotFound;
+import com.sedeo.settlement.model.error.SettlementGroupError.UserNotAuthorized;
+import com.sedeo.settlement.model.error.SettlementGroupError.SettlementAlreadyExists;
+import com.sedeo.settlement.model.view.DetailedSettlement;
+import com.sedeo.settlement.model.view.ExchangeWithParticipants;
+import com.sedeo.settlement.model.view.SimpleSettlement;
 import io.vavr.control.Either;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+
+import static java.util.stream.Collectors.toMap;
 
 public class SettlementsFacade implements Settlements {
 
     private final SettlementRepository settlementRepository;
+    private final ParticipantRepository participantRepository;
 
-    public SettlementsFacade(SettlementRepository settlementRepository) {
+    public SettlementsFacade(SettlementRepository settlementRepository, ParticipantRepository participantRepository) {
         this.settlementRepository = settlementRepository;
+        this.participantRepository = participantRepository;
     }
 
     @Override
-    public Either<GeneralError, Void> createSettlement(Settlement settlement, UUID groupId) {
-        return settlementRepository.save(settlement, groupId)
+    public Either<GeneralError, Void> createSettlement(Settlement settlement, UUID userId, UUID groupId) {
+        if (settlementRepository.exists(settlement.settlementId())) {
+            return Either.left(new SettlementAlreadyExists());
+        }
+        Set<UUID> exchangeParticipants = settlement.aggregateSettlementParticipants(userId);
+
+        return settlement.validateThatParticipantsBelongToGroup(participantRepository.exist(groupId, exchangeParticipants))
+                .flatMap(Settlement::validateExchangeDirections)
+                .flatMap(Settlement::validateTotalValue)
+                .flatMap(success -> settlementRepository.save(settlement, groupId))
                 .flatMap(result -> Either.right(null));
     }
 
     @Override
-    public Either<GeneralError, List<SimpleSettlement>> fetchSettlements(UUID groupId) {
-        return settlementRepository.find(groupId);
+    public Either<GeneralError, List<SimpleSettlement>> fetchSettlements(UUID groupId, UUID userId) {
+        return ifParticipantBelongsToGroup(groupId, userId)
+                .flatMap(participantBelongs -> settlementRepository.find(groupId));
     }
 
     @Override
-    public Either<GeneralError, Settlement> fetchSettlementDetails(UUID settlementId) {
-        return settlementRepository.findSettlement(settlementId);
+    public Either<GeneralError, DetailedSettlement> fetchSettlementDetails(UUID userId, UUID groupId, UUID settlementId) {
+        boolean settlementDoesNotExist = !settlementRepository.exists(settlementId);
+        if (settlementDoesNotExist) {
+            return Either.left(new SettlementNotFound());
+        }
+
+        return participantRepository.findParticipantsForGroup(groupId)
+                .flatMap(participants -> {
+                    Map<UUID, Participant> participantsMap = participants.stream().collect(toMap(Participant::userId, participant -> participant));
+
+                    boolean participantDoesNotExist = !participantsMap.containsKey(userId);
+                    if (participantDoesNotExist) {
+                        return Either.left(new UserNotAuthorized());
+                    }
+
+                    return settlementRepository.findSettlement(settlementId)
+                            .map(settlement -> mapSettlementToDetailedSettlement(settlement, participantsMap));
+                });
     }
 
+    private DetailedSettlement mapSettlementToDetailedSettlement(Settlement settlement, Map<UUID, Participant> participantsMap) {
+        return new DetailedSettlement(
+                settlement.settlementId(),
+                settlement.title(),
+                settlement.totalValue(),
+                settlement.exchanges().stream().map(exchange -> new ExchangeWithParticipants(
+                        exchange.exchangeId(),
+                        participantsMap.get(exchange.debtorUserId()),
+                        participantsMap.get(exchange.creditorUserId()),
+                        exchange.value())).toList()
+        );
+    }
+
+    private Either<GeneralError, Void> ifParticipantBelongsToGroup(UUID groupId, UUID userId) {
+        boolean participantDoesNotExist = !participantRepository.exists(groupId, userId);
+        if (participantDoesNotExist) {
+            return Either.left(new UserNotAuthorized());
+        }
+        return Either.right(null);
+    }
 }

@@ -5,7 +5,7 @@ import com.sedeo.common.error.GeneralError;
 import com.sedeo.settlement.db.mapper.SettlementEntityMapper;
 import com.sedeo.settlement.db.modelmapper.SettlementMapper;
 import com.sedeo.settlement.model.Settlement;
-import com.sedeo.settlement.model.SimpleSettlement;
+import com.sedeo.settlement.model.view.SimpleSettlement;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
@@ -15,7 +15,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.UUID;
 
+import static com.sedeo.settlement.db.queries.SettlementGroupQuery.SETTLEMENT_GROUP_EXISTS_BY_GROUP_ID;
 import static com.sedeo.settlement.db.queries.SettlementQuery.*;
+import static java.lang.Boolean.TRUE;
 import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
 public class SettlementJdbcRepository implements SettlementRepository {
@@ -59,5 +61,10 @@ public class SettlementJdbcRepository implements SettlementRepository {
                 .mapLeft(throwable -> (GeneralError) new DatabaseError.DatabaseReadUnsuccessfulError(throwable))
                 .flatMap(settlementEntity -> exchangeRepository.find(settlementId)
                         .map(exchanges -> SETTLEMENT_MAPPER.settlementEntityToSettlement(settlementEntity, exchanges)));
+    }
+
+    @Override
+    public Boolean exists(UUID settlementId) {
+        return TRUE.equals(jdbcTemplate.queryForObject(SETTLEMENT_EXISTS_BY_SETTLEMENT_ID, Boolean.class, settlementId));
     }
 }

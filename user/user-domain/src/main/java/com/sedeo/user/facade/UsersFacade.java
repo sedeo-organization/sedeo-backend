@@ -92,4 +92,10 @@ public class UsersFacade implements Users {
         return userRepository.createFriendship(new FriendshipEntity(firstUserId, secondUserId))
                 .map(USER_MAPPER::friendshipEntityToFriendship);
     }
+
+    @Override
+    public Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds) {
+        return userRepository.findUsers(userIds)
+                .map(USER_MAPPER::userEntitiesToUsers);
+    }
 }

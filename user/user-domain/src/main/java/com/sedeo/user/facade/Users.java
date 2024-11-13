@@ -25,4 +25,6 @@ public interface Users {
     Either<GeneralError, FriendInvitation> changeFriendInvitationStatus(UUID requestedUserId, UUID invitingUserId, InvitationStatus status);
 
     Either<GeneralError, Friendship> createFriendship(UUID firstUserId, UUID secondUserId);
+
+    Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds);
 }
