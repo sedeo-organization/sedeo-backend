@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.sedeo.settlement.db.queries.SettlementGroupQuery.*;
+import static java.lang.Boolean.TRUE;
 
 public class SettlementGroupJdbcRepository implements SettlementGroupRepository {
 
@@ -35,7 +36,7 @@ public class SettlementGroupJdbcRepository implements SettlementGroupRepository 
     }
 
     @Override
-    public Either<GeneralError, List<SettlementGroup>> findUsersSettlementGroups(List<UUID> groupIds) {
+    public Either<GeneralError, List<SettlementGroup>> findSettlementGroups(List<UUID> groupIds) {
         SqlParameterSource parameters = new MapSqlParameterSource(Map.of(GROUP_IDS_PARAMETER, groupIds));
 
         return Try.of(() -> namedParameterJdbcOperations.query(FIND_GROUPS_BY_GROUP_IDS, parameters, SETTLEMENT_GROUP_MAPPER))
@@ -54,5 +55,10 @@ public class SettlementGroupJdbcRepository implements SettlementGroupRepository 
                 .toEither()
                 .map(result -> settlementGroup)
                 .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
+    public Boolean exists(UUID groupId) {
+        return TRUE.equals(jdbcTemplate.queryForObject(SETTLEMENT_GROUP_EXISTS_BY_GROUP_ID, Boolean.class, groupId));
     }
 }

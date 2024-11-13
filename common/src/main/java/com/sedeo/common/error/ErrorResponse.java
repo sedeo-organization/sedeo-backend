@@ -12,4 +12,12 @@ public record ErrorResponse(Integer statusCode, String message) {
     public static ResponseEntity<ErrorResponse> databaseError(String message) {
         return new ResponseEntity<>(new ErrorResponse(409, message), HttpStatus.CONFLICT);
     }
+
+    public static ResponseEntity<ErrorResponse> notAuthorized(String message) {
+        return new ResponseEntity<>(new ErrorResponse(403, message), HttpStatus.FORBIDDEN);
+    }
+
+    public static ResponseEntity<ErrorResponse> conflict(String message) {
+        return new ResponseEntity<>(new ErrorResponse(409, message), HttpStatus.CONFLICT);
+    }
 }

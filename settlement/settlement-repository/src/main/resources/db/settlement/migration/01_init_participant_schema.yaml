@@ -13,6 +13,12 @@ databaseChangeLog:
                   name: user_id
                   type: uuid
               - column:
+                  name: first_name
+                  type: text
+              - column:
+                  name: last_name
+                  type: text
+              - column:
                   name: settlement_status
                   type: text
   - changeSet:
@@ -30,6 +36,12 @@ databaseChangeLog:
                   name: user_id
                   value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"
               - column:
+                  name: first_name
+                  value: "John"
+              - column:
+                  name: last_name
+                  value: "Doe"
+              - column:
                   name: settlement_status
                   value: "PENDING"
         - insert:
@@ -41,6 +53,12 @@ databaseChangeLog:
               - column:
                   name: user_id
                   value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"
+              - column:
+                  name: first_name
+                  value: "Adam"
+              - column:
+                  name: last_name
+                  value: "Savage"
               - column:
                   name: settlement_status
                   value: "SETTLED"

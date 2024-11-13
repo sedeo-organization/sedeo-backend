@@ -1,9 +1,8 @@
 package com.sedeo.settlement.db;
 
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Settlement;
-import com.sedeo.settlement.model.SimpleSettlement;
+import com.sedeo.settlement.model.view.SimpleSettlement;
 import io.vavr.control.Either;
 
 import java.util.List;
@@ -16,4 +15,6 @@ public interface SettlementRepository {
     Either<GeneralError, List<SimpleSettlement>> find(UUID groupId);
 
     Either<GeneralError, Settlement> findSettlement(UUID settlementId);
+
+    Boolean exists(UUID settlementId);
 }

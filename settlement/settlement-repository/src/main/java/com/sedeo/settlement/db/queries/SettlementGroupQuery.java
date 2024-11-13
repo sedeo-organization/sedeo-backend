@@ -11,4 +11,7 @@ public class SettlementGroupQuery {
 
     public static final String SAVE_SETTLEMENT_GROUP = "INSERT INTO %s VALUES(?, ?)"
             .formatted(SETTLEMENT_GROUP_TABLE);
+
+    public static final String SETTLEMENT_GROUP_EXISTS_BY_GROUP_ID = "SELECT EXISTS (SELECT 1 FROM %s WHERE group_id = ?)"
+            .formatted(SETTLEMENT_GROUP_TABLE);
 }

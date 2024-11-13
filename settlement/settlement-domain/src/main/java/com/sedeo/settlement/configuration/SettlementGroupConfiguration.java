@@ -7,6 +7,7 @@ import com.sedeo.settlement.facade.SettlementGroups;
 import com.sedeo.settlement.facade.SettlementGroupsFacade;
 import com.sedeo.settlement.facade.Settlements;
 import com.sedeo.settlement.facade.SettlementsFacade;
+import com.sedeo.user.facade.Users;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,12 +15,13 @@ import org.springframework.context.annotation.Configuration;
 public class SettlementGroupConfiguration {
 
     @Bean
-    SettlementGroups settlementGroups(SettlementGroupRepository settlementGroupRepository, ParticipantRepository participantRepository) {
-        return new SettlementGroupsFacade(settlementGroupRepository, participantRepository);
+    SettlementGroups settlementGroups(SettlementGroupRepository settlementGroupRepository, ParticipantRepository participantRepository,
+                                      Users users) {
+        return new SettlementGroupsFacade(settlementGroupRepository, participantRepository, users);
     }
 
     @Bean
-    Settlements settlements(SettlementRepository settlementRepository) {
-        return new SettlementsFacade(settlementRepository);
+    Settlements settlements(SettlementRepository settlementRepository, ParticipantRepository participantRepository) {
+        return new SettlementsFacade(settlementRepository, participantRepository);
     }
 }

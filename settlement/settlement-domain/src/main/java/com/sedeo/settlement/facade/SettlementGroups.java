@@ -6,11 +6,12 @@ import com.sedeo.settlement.model.SettlementStatus;
 import io.vavr.control.Either;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface SettlementGroups {
 
     Either<GeneralError, List<SettlementGroup>> fetchSettlementGroups(UUID userId, List<SettlementStatus> statuses);
 
-    Either<GeneralError, Void> createSettlementGroup(UUID groupId, UUID userId, String title);
+    Either<GeneralError, Void> createSettlementGroup(UUID groupId, String title, Set<UUID> userIds);
 }

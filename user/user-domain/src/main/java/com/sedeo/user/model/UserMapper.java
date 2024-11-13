@@ -17,6 +17,8 @@ public interface UserMapper {
 
     User userEntityToUser(UserEntity userEntity);
 
+    List<User> userEntitiesToUsers(List<UserEntity> userEntities);
+
     List<User> userEntityListToUser(List<UserEntity> userEntities);
 
     FriendshipEntity friendshipToFriendshipEntity(Friendship friendship);

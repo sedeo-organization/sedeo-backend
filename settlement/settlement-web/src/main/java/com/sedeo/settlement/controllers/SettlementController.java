@@ -5,9 +5,8 @@ import com.sedeo.settlement.controllers.dto.CreateSingleSettlementRequest;
 import com.sedeo.settlement.controllers.dto.SettlementMapper;
 import com.sedeo.settlement.facade.SettlementGroups;
 import com.sedeo.settlement.facade.Settlements;
-import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementStatus;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,11 +41,13 @@ public class SettlementController {
     }
 
     @PostMapping("/settlement-groups")
-    public ResponseEntity<?> createSettlementGroup(@RequestBody CreateSettlementGroupRequest createSettlementGroupRequest) {
+    public ResponseEntity<?> createSettlementGroup(@RequestBody @Valid CreateSettlementGroupRequest createSettlementGroupRequest) {
         //TODO: Change UUID so that it is extracted from the token
-        return settlementGroups.createSettlementGroup(createSettlementGroupRequest.groupId(),
-                UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"),
-                createSettlementGroupRequest.title()
+        createSettlementGroupRequest.participantIds().add(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"));
+        return settlementGroups.createSettlementGroup(
+                createSettlementGroupRequest.groupId(),
+                createSettlementGroupRequest.title(),
+                createSettlementGroupRequest.participantIds()
         ).fold(
                 ResponseMapper::mapError,
                 settlementGroups -> ResponseEntity.status(CREATED).build()
@@ -54,8 +55,10 @@ public class SettlementController {
     }
 
     @PostMapping("/settlement-groups/{groupId}/settlements")
-    public ResponseEntity<?> createSingleSettlement(@RequestBody CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId) {
-        return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), groupId)
+    public ResponseEntity<?> createSingleSettlement(@RequestBody @Valid CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId) {
+        //TODO: Change UUID so that it is extracted from the token
+        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
+        return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), principal, groupId)
                 .fold(
                         ResponseMapper::mapError,
                         success -> ResponseEntity.status(CREATED).build()
@@ -64,17 +67,21 @@ public class SettlementController {
 
     @GetMapping("/settlement-groups/{groupId}/settlements")
     public ResponseEntity<?> fetchSettlements(@PathVariable("groupId") UUID groupId) {
-        return settlements.fetchSettlements(groupId).fold(
+        //TODO: Change UUID so that it is extracted from the token
+        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
+        return settlements.fetchSettlements(groupId, principal).fold(
                 ResponseMapper::mapError,
                 settlements -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.simpleSettlementsToFetchSettlementsResponse(settlements))
         );
     }
 
-    @GetMapping("/settlements/{settlementId}")
-    public ResponseEntity<?> fetchSettlementDetails(@PathVariable("settlementId") UUID settlementId) {
-        return settlements.fetchSettlementDetails(settlementId).fold(
+    @GetMapping("/settlement-groups/{groupId}/settlements/{settlementId}")
+    public ResponseEntity<?> fetchSettlementDetails(@PathVariable("groupId") UUID groupId, @PathVariable("settlementId") UUID settlementId) {
+        //TODO: Change UUID so that it is extracted from the token
+        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
+        return settlements.fetchSettlementDetails(principal, groupId, settlementId).fold(
                 ResponseMapper::mapError,
-                settlementDetails -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.settlementToFetchSettlementDetailsResponse(settlementDetails))
+                settlementDetails -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.detailedSettlementToFetchSettlementDetailsResponse(settlementDetails))
         );
     }
 

@@ -3,7 +3,9 @@ package com.sedeo.settlement.controllers.dto;
 import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementGroup;
-import com.sedeo.settlement.model.SimpleSettlement;
+import com.sedeo.settlement.model.view.DetailedSettlement;
+import com.sedeo.settlement.model.view.ExchangeWithParticipants;
+import com.sedeo.settlement.model.view.SimpleSettlement;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -40,9 +42,14 @@ public interface SettlementMapper {
         return new FetchSettlementsResponse(fetchSettlementResponseSettlements);
     }
 
-    FetchSettlementDetailsResponse.SettlementExchange exchangeToFetchSettlementDetailsResponseSettlementExchange(Exchange exchange);
+    @Mapping(source = "creditor.firstName", target = "creditorFirstName")
+    @Mapping(source = "creditor.lastName", target = "creditorLastName")
+    @Mapping(source = "debtor.firstName", target = "debtorFirstName")
+    @Mapping(source = "debtor.lastName", target = "debtorLastName")
+    FetchSettlementDetailsResponse.SettlementExchange exchangeWithParticipantsToFetchSettlementDetailsResponseSettlementExchange(ExchangeWithParticipants exchangeWithParticipants);
 
-    List<FetchSettlementDetailsResponse.SettlementExchange> exchangeListToFetchSettlementDetailsResponseSettlementExchangeList(List<Exchange> exchanges);
+    List<FetchSettlementDetailsResponse.SettlementExchange> exchangeWithParticipantListToFetchSettlementDetailsResponseSettlementExchangeList(List<ExchangeWithParticipants> exchangesWithParticipants);
 
-    FetchSettlementDetailsResponse settlementToFetchSettlementDetailsResponse(Settlement settlement);
+    @Mapping(source = "exchanges", target = "settlementExchanges")
+    FetchSettlementDetailsResponse detailedSettlementToFetchSettlementDetailsResponse(DetailedSettlement detailedSettlement);
 }
