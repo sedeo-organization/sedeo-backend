@@ -95,6 +95,16 @@ public class SettlementController {
         );
     }
 
+    @GetMapping("/settlement-groups/{groupId}/participants")
+    public ResponseEntity<?> fetchParticipants(@PathVariable("groupId") UUID groupId) {
+        //TODO: Change UUID so that it is extracted from the token
+        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e658d");
+        return settlements.fetchParticipants(principal, groupId).fold(
+                ResponseMapper::mapError,
+                participants -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.participantsToFetchParticipantsResponse(participants))
+        );
+    }
+
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
         if (Objects.equals(status, SettlementStatus.PENDING.name().toLowerCase())) {
             return List.of(SettlementStatus.PENDING);

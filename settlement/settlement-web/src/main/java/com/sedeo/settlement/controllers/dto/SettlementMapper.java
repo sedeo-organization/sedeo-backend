@@ -1,6 +1,7 @@
 package com.sedeo.settlement.controllers.dto;
 
 import com.sedeo.settlement.model.Exchange;
+import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.SettlementGroup;
 import com.sedeo.settlement.model.view.DetailedSettlement;
@@ -52,4 +53,13 @@ public interface SettlementMapper {
 
     @Mapping(source = "exchanges", target = "settlementExchanges")
     FetchSettlementDetailsResponse detailedSettlementToFetchSettlementDetailsResponse(DetailedSettlement detailedSettlement);
+
+    FetchParticipantsResponse.Participant participantToFetchParticipantsResponseParticipant(Participant participant);
+
+    List<FetchParticipantsResponse.Participant> participantListToFetchParticipantsResponseParticipantList(List<Participant> participants);
+
+    default FetchParticipantsResponse participantsToFetchParticipantsResponse(List<Participant> participants) {
+        List<FetchParticipantsResponse.Participant> fetchParticipantsResponseParticipantList = participantListToFetchParticipantsResponseParticipantList(participants);
+        return new FetchParticipantsResponse(fetchParticipantsResponseParticipantList);
+    }
 }
