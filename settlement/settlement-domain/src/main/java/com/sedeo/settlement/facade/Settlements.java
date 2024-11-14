@@ -16,4 +16,6 @@ public interface Settlements {
     Either<GeneralError, List<SimpleSettlement>> fetchSettlements(UUID userId, UUID groupId);
 
     Either<GeneralError, DetailedSettlement> fetchSettlementDetails(UUID userId, UUID groupId, UUID settlementId);
+
+    Either<GeneralError, Void> settleExchange(UUID userId, UUID groupId, UUID settlementId, UUID exchangeId);
 }

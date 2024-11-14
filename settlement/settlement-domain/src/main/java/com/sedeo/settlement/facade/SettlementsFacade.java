@@ -3,6 +3,7 @@ package com.sedeo.settlement.facade;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.settlement.db.ParticipantRepository;
 import com.sedeo.settlement.db.SettlementRepository;
+import com.sedeo.settlement.model.Exchange;
 import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.error.SettlementGroupError.SettlementNotFound;
@@ -37,10 +38,12 @@ public class SettlementsFacade implements Settlements {
         }
         Set<UUID> exchangeParticipants = settlement.aggregateSettlementParticipants(userId);
 
-        return settlement.validateThatParticipantsBelongToGroup(participantRepository.exist(groupId, exchangeParticipants))
+        List<Exchange> pendingExchanges = settlement.exchanges().stream().map(Exchange::withPendingStatus).toList();
+        return settlement.withExchanges(pendingExchanges)
+                .validateThatParticipantsBelongToGroup(participantRepository.exist(groupId, exchangeParticipants))
                 .flatMap(Settlement::validateExchangeDirections)
                 .flatMap(Settlement::validateTotalValue)
-                .flatMap(success -> settlementRepository.save(settlement, groupId))
+                .flatMap(successfulSettlement -> settlementRepository.save(successfulSettlement, groupId))
                 .flatMap(result -> Either.right(null));
     }
 
@@ -71,6 +74,18 @@ public class SettlementsFacade implements Settlements {
                 });
     }
 
+    @Override
+    public Either<GeneralError, Void> settleExchange(UUID userId, UUID groupId, UUID settlementId, UUID exchangeId) {
+        if (!participantRepository.exists(groupId, userId)) {
+            return Either.left(new UserNotAuthorized());
+        }
+
+        return settlementRepository.findSettlement(settlementId)
+                .flatMap(settlement -> settlement.settleExchange(userId, exchangeId))
+                .flatMap(settlement -> settlementRepository.update(settlement, groupId))
+                .flatMap(result -> Either.right(null));
+    }
+
     private DetailedSettlement mapSettlementToDetailedSettlement(Settlement settlement, Map<UUID, Participant> participantsMap) {
         return new DetailedSettlement(
                 settlement.settlementId(),
@@ -80,7 +95,8 @@ public class SettlementsFacade implements Settlements {
                         exchange.exchangeId(),
                         participantsMap.get(exchange.debtorUserId()),
                         participantsMap.get(exchange.creditorUserId()),
-                        exchange.value())).toList()
+                        exchange.exchangeValue(),
+                        exchange.status())).toList()
         );
     }
 

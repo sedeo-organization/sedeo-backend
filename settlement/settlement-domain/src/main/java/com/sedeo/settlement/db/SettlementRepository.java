@@ -17,4 +17,6 @@ public interface SettlementRepository {
     Either<GeneralError, Settlement> findSettlement(UUID settlementId);
 
     Boolean exists(UUID settlementId);
+
+    Either<GeneralError, Settlement> update(Settlement settlement, UUID groupId);
 }

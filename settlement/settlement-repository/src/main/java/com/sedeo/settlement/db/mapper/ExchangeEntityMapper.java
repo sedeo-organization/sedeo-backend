@@ -17,7 +17,8 @@ public class ExchangeEntityMapper implements RowMapper<ExchangeEntity> {
                 (UUID) rs.getObject(Fields.GROUP_ID),
                 (UUID) rs.getObject(Fields.DEBTOR_USER_ID),
                 (UUID) rs.getObject(Fields.CREDITOR_USER_ID),
-                rs.getBigDecimal(Fields.VALUE)
+                rs.getBigDecimal(Fields.EXCHANGE_VALUE),
+                rs.getString(Fields.STATUS)
         );
     }
 
@@ -27,7 +28,8 @@ public class ExchangeEntityMapper implements RowMapper<ExchangeEntity> {
         private static final String GROUP_ID = "group_id";
         private static final String DEBTOR_USER_ID = "debtor_user_id";
         private static final String CREDITOR_USER_ID = "creditor_user_id";
-        private static final String VALUE = "value";
+        private static final String EXCHANGE_VALUE = "exchange_value";
+        private static final String STATUS = "status";
 
     }
 }

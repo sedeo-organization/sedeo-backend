@@ -22,6 +22,10 @@ public class ResponseMapper {
             return ErrorResponse.conflict(settlementAlreadyExists.message());
         } else if (error instanceof SettlementGroupError.SettlementGroupAlreadyExists settlementGroupAlreadyExists) {
             return ErrorResponse.conflict(settlementGroupAlreadyExists.message());
+        } else if (error instanceof SettlementGroupError.ExchangeDoesNotExist exchangeDoesNotExist) {
+            return ErrorResponse.notFound(exchangeDoesNotExist.message());
+        } else if (error instanceof SettlementGroupError.ExchangeStatusChangeNotAllowed exchangeStatusChangeNotAllowed) {
+            return ErrorResponse.conflict(exchangeStatusChangeNotAllowed.message());
         } else {
             return ErrorResponse.databaseError(UNEXPECTED_ERROR_OCCURRED);
         }

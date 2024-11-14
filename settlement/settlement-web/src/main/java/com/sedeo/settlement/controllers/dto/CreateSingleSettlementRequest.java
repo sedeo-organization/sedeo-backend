@@ -20,7 +20,7 @@ public record CreateSingleSettlementRequest(
             @NotNull UUID exchangeId,
             @NotNull UUID debtorUserId,
             @NotNull UUID creditorUserId,
-            @NotNull BigDecimal value
+            @NotNull BigDecimal exchangeValue
     ) {
     }
 }
