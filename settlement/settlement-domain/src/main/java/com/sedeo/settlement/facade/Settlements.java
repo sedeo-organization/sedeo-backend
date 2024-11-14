@@ -1,6 +1,7 @@
 package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.Settlement;
 import com.sedeo.settlement.model.view.DetailedSettlement;
 import com.sedeo.settlement.model.view.SimpleSettlement;
@@ -18,4 +19,6 @@ public interface Settlements {
     Either<GeneralError, DetailedSettlement> fetchSettlementDetails(UUID userId, UUID groupId, UUID settlementId);
 
     Either<GeneralError, Void> settleExchange(UUID userId, UUID groupId, UUID settlementId, UUID exchangeId);
+
+    Either<GeneralError, List<Participant>> fetchParticipants(UUID userId, UUID groupId);
 }

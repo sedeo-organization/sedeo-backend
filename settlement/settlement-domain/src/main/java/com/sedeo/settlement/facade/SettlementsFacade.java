@@ -86,6 +86,15 @@ public class SettlementsFacade implements Settlements {
                 .flatMap(result -> Either.right(null));
     }
 
+    @Override
+    public Either<GeneralError, List<Participant>> fetchParticipants(UUID userId, UUID groupId) {
+        if (!participantRepository.exists(groupId, userId)) {
+            return Either.left(new UserNotAuthorized());
+        }
+
+        return participantRepository.findParticipantsForGroup(groupId);
+    }
+
     private DetailedSettlement mapSettlementToDetailedSettlement(Settlement settlement, Map<UUID, Participant> participantsMap) {
         return new DetailedSettlement(
                 settlement.settlementId(),
