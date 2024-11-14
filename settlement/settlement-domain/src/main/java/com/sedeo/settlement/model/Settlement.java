@@ -29,7 +29,7 @@ public record Settlement(UUID settlementId, String title, BigDecimal totalValue,
     public Either<GeneralError, Settlement> validateTotalValue() {
         boolean exchangeValuesDoNotMatchTotalValue = !this.exchanges()
                 .stream()
-                .map(Exchange::value)
+                .map(Exchange::exchangeValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                 .equals(this.totalValue());
 
@@ -52,5 +52,35 @@ public record Settlement(UUID settlementId, String title, BigDecimal totalValue,
                 .stream()
                 .flatMap(exchange -> Stream.of(exchange.creditorUserId(), exchange.debtorUserId(), creatorId))
                 .collect(Collectors.toSet());
+    }
+
+    public Either<GeneralError, Settlement> settleExchange(UUID userId, UUID exchangeId) {
+        Optional<Exchange> lookedForExchange = exchanges.stream()
+                .filter(exchange -> exchange.exchangeId().equals(exchangeId))
+                .findAny();
+        if (lookedForExchange.isEmpty()) {
+            return Either.left(new SettlementGroupError.ExchangeDoesNotExist());
+        }
+        Exchange foundExchange = lookedForExchange.get();
+
+        boolean userIsNotCreditor = !foundExchange.creditorUserId().equals(userId);
+        if (userIsNotCreditor) {
+            return Either.left(new SettlementGroupError.UserNotAuthorized());
+        }
+
+        boolean statusChangeIsPossible = ExchangeStatus.SETTLED.isStatusChangePossible(foundExchange.status());
+        if (statusChangeIsPossible) {
+            foundExchange = foundExchange.withSettledStatus();
+        } else {
+            return Either.left(new SettlementGroupError.ExchangeStatusChangeNotAllowed());
+        }
+
+        exchanges.remove(foundExchange);
+        exchanges.add(foundExchange);
+        return Either.right(new Settlement(this.settlementId, this.title, this.totalValue, this.exchanges));
+    }
+
+    public Settlement withExchanges(List<Exchange> exchanges) {
+        return new Settlement(this.settlementId, this.title, this.totalValue, exchanges);
     }
 }

@@ -16,8 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.sedeo.settlement.db.queries.ExchangeQuery.EXCHANGES_BY_SETTLEMENT_ID;
-import static com.sedeo.settlement.db.queries.ExchangeQuery.SAVE_EXCHANGE;
+import static com.sedeo.settlement.db.queries.ExchangeQuery.*;
 
 public class ExchangeJdbcRepository implements ExchangeRepository {
 
@@ -47,8 +46,25 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
                 .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
     }
 
-    private Either<DatabaseWriteUnsuccessfulError, Exchange> save(Exchange exchange, UUID groupId, UUID settlementId) {
-        return Try.of(() -> jdbcTemplate.update(SAVE_EXCHANGE, exchange.exchangeId(), settlementId, groupId, exchange.debtorUserId(), exchange.creditorUserId(), exchange.value()))
+    @Override
+    public Either<GeneralError, List<Exchange>> update(List<Exchange> exchanges, UUID groupId, UUID settlementId) {
+        return Either.sequence(exchanges.stream().map(exchange -> this.update(exchange, settlementId, groupId)).toList())
+                .map(updatedExchanges -> exchanges)
+                .mapLeft(Traversable::head);
+    }
+
+    private Either<GeneralError, Exchange> update(Exchange exchange, UUID groupId, UUID settlementId) {
+        return Try.of(() -> jdbcTemplate.update(UPDATE_EXCHANGE, settlementId, groupId, exchange.debtorUserId(), exchange.creditorUserId(),
+                        exchange.exchangeValue(), exchange.status().name(), exchange.exchangeId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> exchange)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    private Either<GeneralError, Exchange> save(Exchange exchange, UUID groupId, UUID settlementId) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_EXCHANGE, exchange.exchangeId(), settlementId, groupId,
+                        exchange.debtorUserId(), exchange.creditorUserId(), exchange.exchangeValue(), exchange.status().name()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
                 .map(result -> exchange)

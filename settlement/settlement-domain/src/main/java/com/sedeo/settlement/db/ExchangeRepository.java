@@ -12,4 +12,6 @@ public interface ExchangeRepository {
     Either<GeneralError, List<Exchange>> save(List<Exchange> exchanges, UUID groupId, UUID settlementId);
 
     Either<GeneralError, List<Exchange>> find(UUID settlementId);
+
+    Either<GeneralError, List<Exchange>> update(List<Exchange> exchanges, UUID groupId, UUID settlementId);
 }

@@ -67,4 +67,14 @@ public class SettlementJdbcRepository implements SettlementRepository {
     public Boolean exists(UUID settlementId) {
         return TRUE.equals(jdbcTemplate.queryForObject(SETTLEMENT_EXISTS_BY_SETTLEMENT_ID, Boolean.class, settlementId));
     }
+
+    @Override
+    public Either<GeneralError, Settlement> update(Settlement settlement, UUID groupId) {
+        return Try.of(() -> jdbcTemplate.update(UPDATE_SETTLEMENT, groupId, settlement.title(), settlement.totalValue(), settlement.settlementId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .mapLeft(exception -> (GeneralError) new DatabaseError.DatabaseWriteUnsuccessfulError(exception))
+                .flatMap(result -> exchangeRepository.update(settlement.exchanges(), settlement.settlementId(), groupId))
+                .map(result -> settlement);
+    }
 }

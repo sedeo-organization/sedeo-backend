@@ -11,6 +11,8 @@ public interface SettlementGroupError extends DomainError {
     String SETTLEMENT_EXCHANGE_CANNOT_INCLUDE_THE_SAME_USERS = "Settlement exchange cannot include the same users";
     String SETTLEMENT_GROUP_ALREADY_EXISTS = "Settlement group already exists";
     String SETTLEMENT_ALREADY_EXISTS = "Settlement already exists";
+    String EXCHANGE_DOES_NOT_EXIST = "Exchange does not exist";
+    String EXCHANGE_STATUS_CHANGE_NOT_ALLOWED = "Exchange status change not allowed";
 
     record SettlementGroupNotFound(String message) implements SettlementGroupError {
         public SettlementGroupNotFound() {
@@ -51,6 +53,18 @@ public interface SettlementGroupError extends DomainError {
     record SettlementAlreadyExists(String message) implements SettlementGroupError {
         public SettlementAlreadyExists() {
             this(SETTLEMENT_ALREADY_EXISTS);
+        }
+    }
+
+    record ExchangeDoesNotExist(String message) implements SettlementGroupError {
+        public ExchangeDoesNotExist() {
+            this(EXCHANGE_DOES_NOT_EXIST);
+        }
+    }
+
+    record ExchangeStatusChangeNotAllowed(String message) implements SettlementGroupError {
+        public ExchangeStatusChangeNotAllowed() {
+            this(EXCHANGE_STATUS_CHANGE_NOT_ALLOWED);
         }
     }
 }

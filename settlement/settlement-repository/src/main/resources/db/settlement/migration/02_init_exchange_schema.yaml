@@ -25,5 +25,8 @@ databaseChangeLog:
                   name: creditor_user_id
                   type: uuid
               - column:
-                  name: value
+                  name: exchange_value
                   type: decimal(10,2)
+              - column:
+                  name: status
+                  type: text

@@ -85,6 +85,16 @@ public class SettlementController {
         );
     }
 
+    @PatchMapping("/settlement-groups/{groupId}/settlements/{settlementId}/exchanges/{exchangeId}")
+    public ResponseEntity<?> settleExchange(@PathVariable UUID groupId, @PathVariable UUID settlementId, @PathVariable UUID exchangeId) {
+        //TODO: Change UUID so that it is extracted from the token
+        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e658d");
+        return settlements.settleExchange(principal, groupId, settlementId, exchangeId).fold(
+                ResponseMapper::mapError,
+                success -> ResponseEntity.ok().build()
+        );
+    }
+
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
         if (Objects.equals(status, SettlementStatus.PENDING.name().toLowerCase())) {
             return List.of(SettlementStatus.PENDING);
