@@ -139,4 +139,20 @@ public class UserJdbcRepository implements UserRepository {
                 .map(result -> friendshipEntity)
                 .mapLeft(DatabaseWriteUnsuccessfulError::new);
     }
+
+    @Override
+    public Either<GeneralError, UserEntity> updateUser(UserEntity userEntity) {
+        return Try.of(() -> jdbcTemplate.update(UPDATE_USER,
+                        userEntity.firstName(),
+                        userEntity.lastName(),
+                        userEntity.phoneNumber(),
+                        userEntity.email(),
+                        userEntity.password(),
+                        userEntity.accountBalance(),
+                        userEntity.userId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> userEntity)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
 }

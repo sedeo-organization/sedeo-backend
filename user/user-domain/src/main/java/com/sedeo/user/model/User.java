@@ -12,4 +12,12 @@ public record User(
         String password,
         BigDecimal accountBalance
 ) {
+
+    public User withReducedBalance(BigDecimal positiveBalance) {
+        return new User(this.userId, this.firstName, this.lastName, this.phoneNumber, this.email, this.password, this.accountBalance.subtract(positiveBalance));
+    }
+
+    public User withAddedBalance(BigDecimal positiveBalance) {
+        return new User(this.userId, this.firstName, this.lastName, this.phoneNumber, this.email, this.password, this.accountBalance.add(positiveBalance));
+    }
 }

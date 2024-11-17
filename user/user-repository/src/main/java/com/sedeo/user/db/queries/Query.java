@@ -56,4 +56,7 @@ public class Query {
             "inviting_user_id = ? AND requested_user_id = ?").formatted(FRIEND_INVITATION_TABLE);
 
     public static final String SAVE_FRIENDSHIP = "INSERT INTO %s VALUES (?, ?)".formatted(FRIENDSHIP_TABLE);
+
+    public static final String UPDATE_USER = ("UPDATE %s SET first_name = ?, last_name = ?, phone_number = ?, email = ?," +
+            " password = ?, account_balance = ? WHERE user_id = ?").formatted(USER_TABLE);
 }

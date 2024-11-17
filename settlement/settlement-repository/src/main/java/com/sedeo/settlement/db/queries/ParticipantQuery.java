@@ -20,9 +20,15 @@ public class ParticipantQuery {
     public static final String FIND_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM %s WHERE group_id = ?"
             .formatted(PARTICIPANT_TABLE);
 
+    public static final String FIND_PARTICIPANTS_BY_GROUP_ID_AND_USER_IDS = "SELECT * FROM %s WHERE group_id = :%s AND user_id IN (:%s)"
+            .formatted(PARTICIPANT_TABLE, GROUP_ID_PARAMETER, USER_IDS_PARAMETER);
+
     public static final String PARTICIPANT_EXISTS_BY_GROUP_ID_AND_USER_ID = "SELECT EXISTS (SELECT 1 FROM %s WHERE group_id = ? AND user_id = ?)"
             .formatted(PARTICIPANT_TABLE);
 
     public static final String PARTICIPANTS_EXIST_BY_GROUP_ID_AND_USER_IDS = ("SELECT COUNT(user_id) = :%s FROM %s WHERE group_id = :%s AND user_id IN (:%s)")
             .formatted(USER_IDS_SIZE_PARAMETER, PARTICIPANT_TABLE, GROUP_ID_PARAMETER, USER_IDS_PARAMETER);
+
+    public static final String UPDATE_PARTICIPANT = ("UPDATE %s SET first_name = ?, last_name = ?, settlement_status = ? WHERE group_id = ? AND user_id = ?")
+            .formatted(PARTICIPANT_TABLE);
 }

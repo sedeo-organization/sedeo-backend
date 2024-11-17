@@ -53,6 +53,15 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
                 .mapLeft(Traversable::head);
     }
 
+    @Override
+    public Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipant(UUID groupId, UUID participantId) {
+        return Try.of(() -> jdbcTemplate.query(EXCHANGES_BY_GROUP_ID_AND_USER_ID, EXCHANGE_ENTITY_MAPPER, groupId, participantId, participantId))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .map(EXCHANGE_MAPPER::exchangeEntityListToExchangeList)
+                .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
+    }
+
     private Either<GeneralError, Exchange> update(Exchange exchange, UUID groupId, UUID settlementId) {
         return Try.of(() -> jdbcTemplate.update(UPDATE_EXCHANGE, settlementId, groupId, exchange.debtorUserId(), exchange.creditorUserId(),
                         exchange.exchangeValue(), exchange.status().name(), exchange.exchangeId()))

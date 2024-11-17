@@ -1,6 +1,8 @@
 package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.event.ExchangeCreatedEvent;
+import com.sedeo.event.ExchangeSettledEvent;
 import com.sedeo.settlement.db.ParticipantRepository;
 import com.sedeo.settlement.db.SettlementRepository;
 import com.sedeo.settlement.model.Exchange;
@@ -13,6 +15,7 @@ import com.sedeo.settlement.model.view.DetailedSettlement;
 import com.sedeo.settlement.model.view.ExchangeWithParticipants;
 import com.sedeo.settlement.model.view.SimpleSettlement;
 import io.vavr.control.Either;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Map;
@@ -25,10 +28,13 @@ public class SettlementsFacade implements Settlements {
 
     private final SettlementRepository settlementRepository;
     private final ParticipantRepository participantRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public SettlementsFacade(SettlementRepository settlementRepository, ParticipantRepository participantRepository) {
+    public SettlementsFacade(SettlementRepository settlementRepository, ParticipantRepository participantRepository,
+                             ApplicationEventPublisher applicationEventPublisher) {
         this.settlementRepository = settlementRepository;
         this.participantRepository = participantRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -44,6 +50,7 @@ public class SettlementsFacade implements Settlements {
                 .flatMap(Settlement::validateExchangeDirections)
                 .flatMap(Settlement::validateTotalValue)
                 .flatMap(successfulSettlement -> settlementRepository.save(successfulSettlement, groupId))
+                .flatMap(savedSettlement -> this.publishExchangeCreatedEvents(savedSettlement.exchanges(), groupId))
                 .flatMap(result -> Either.right(null));
     }
 
@@ -62,7 +69,7 @@ public class SettlementsFacade implements Settlements {
 
         return participantRepository.findParticipantsForGroup(groupId)
                 .flatMap(participants -> {
-                    Map<UUID, Participant> participantsMap = participants.stream().collect(toMap(Participant::userId, participant -> participant));
+                    Map<UUID, Participant> participantsMap = participants.stream().distinct().collect(toMap(Participant::userId, participant -> participant));
 
                     boolean participantDoesNotExist = !participantsMap.containsKey(userId);
                     if (participantDoesNotExist) {
@@ -83,6 +90,8 @@ public class SettlementsFacade implements Settlements {
         return settlementRepository.findSettlement(settlementId)
                 .flatMap(settlement -> settlement.settleExchange(userId, exchangeId))
                 .flatMap(settlement -> settlementRepository.update(settlement, groupId))
+                .flatMap(settlement -> settlement.singleExchange(exchangeId))
+                .flatMap(exchange -> publishExchangeSettledEvents(List.of(exchange), groupId))
                 .flatMap(result -> Either.right(null));
     }
 
@@ -93,6 +102,32 @@ public class SettlementsFacade implements Settlements {
         }
 
         return participantRepository.findParticipantsForGroup(groupId);
+    }
+
+    private Either<GeneralError, Void> publishExchangeCreatedEvents(List<Exchange> exchanges, UUID groupId) {
+        exchanges.forEach(exchange -> applicationEventPublisher.publishEvent(new ExchangeCreatedEvent(this, new ExchangeCreatedEvent.ExchangeCreatedModel(
+                exchange.exchangeId(),
+                groupId,
+                exchange.debtorUserId(),
+                exchange.creditorUserId(),
+                exchange.exchangeValue(),
+                exchange.status().name()
+        ))));
+
+        return Either.right(null);
+    }
+
+    private Either<GeneralError, Void> publishExchangeSettledEvents(List<Exchange> exchanges, UUID groupId) {
+        exchanges.forEach(exchange -> applicationEventPublisher.publishEvent(new ExchangeSettledEvent(this, new ExchangeSettledEvent.ExchangeSettledModel(
+                exchange.exchangeId(),
+                groupId,
+                exchange.debtorUserId(),
+                exchange.creditorUserId(),
+                exchange.exchangeValue(),
+                exchange.status().name()
+        ))));
+
+        return Either.right(null);
     }
 
     private DetailedSettlement mapSettlementToDetailedSettlement(Settlement settlement, Map<UUID, Participant> participantsMap) {

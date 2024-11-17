@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.sedeo.settlement.db.queries.ParticipantQuery.*;
-import static com.sedeo.settlement.db.queries.SettlementQuery.SETTLEMENT_EXISTS_BY_SETTLEMENT_ID;
 import static java.lang.Boolean.TRUE;
 
 public class ParticipantJdbcRepository implements ParticipantRepository {
@@ -72,8 +71,31 @@ public class ParticipantJdbcRepository implements ParticipantRepository {
     }
 
     @Override
+    public Either<GeneralError, Participant> update(Participant participant) {
+        return Try.of(() -> jdbcTemplate.update(UPDATE_PARTICIPANT, participant.firstName(), participant.lastName(),
+                        participant.status().name(), participant.groupId(), participant.userId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> participant)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
     public Either<GeneralError, List<Participant>> findParticipantsForGroup(UUID groupId) {
         return Try.of(() -> jdbcTemplate.query(FIND_PARTICIPANTS_BY_GROUP_ID, PARTICIPANT_ENTITY_MAPPER, groupId))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .map(PARTICIPANT_MAPPER::participantEntitiesToParticipants)
+                .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, List<Participant>> findParticipantsForGroup(List<UUID> participantIds, UUID groupId) {
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(
+                GROUP_ID_PARAMETER, groupId,
+                USER_IDS_PARAMETER, participantIds));
+
+        return Try.of(() -> namedParameterJdbcOperations.query(FIND_PARTICIPANTS_BY_GROUP_ID_AND_USER_IDS, parameters, PARTICIPANT_ENTITY_MAPPER))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .map(PARTICIPANT_MAPPER::participantEntitiesToParticipants)
