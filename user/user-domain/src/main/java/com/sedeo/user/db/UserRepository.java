@@ -32,4 +32,6 @@ public interface UserRepository {
     Either<GeneralError, FriendInvitationEntity> updateFriendInvitation(FriendInvitationEntity friendInvitationEntity);
 
     Either<GeneralError, FriendshipEntity> createFriendship(FriendshipEntity friendshipEntity);
+
+    Either<GeneralError, UserEntity> updateUser(UserEntity userEntity);
 }

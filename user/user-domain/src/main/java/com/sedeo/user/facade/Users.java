@@ -7,6 +7,7 @@ import com.sedeo.user.model.InvitationStatus;
 import com.sedeo.user.model.User;
 import io.vavr.control.Either;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,4 +28,8 @@ public interface Users {
     Either<GeneralError, Friendship> createFriendship(UUID firstUserId, UUID secondUserId);
 
     Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds);
+
+    Either<GeneralError, Void> addToUsersAccountBalance(UUID userId, BigDecimal positiveAmount);
+
+    Either<GeneralError, Void> subtractFromUsersAccountBalance(UUID userId, BigDecimal positiveAmount);
 }

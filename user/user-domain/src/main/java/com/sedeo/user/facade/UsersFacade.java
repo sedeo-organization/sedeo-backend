@@ -11,6 +11,7 @@ import com.sedeo.user.model.error.UserError.FriendInvitationIsPending;
 import io.vavr.control.Either;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -97,5 +98,23 @@ public class UsersFacade implements Users {
     public Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds) {
         return userRepository.findUsers(userIds)
                 .map(USER_MAPPER::userEntitiesToUsers);
+    }
+
+    @Override
+    public Either<GeneralError, Void> addToUsersAccountBalance(UUID userId, BigDecimal positiveAmount) {
+        BigDecimal forcedPositiveAmount = positiveAmount.abs();
+        return this.fetchUser(userId)
+                .map(user -> user.withAddedBalance(forcedPositiveAmount))
+                .flatMap(user -> userRepository.updateUser(USER_MAPPER.userToUserEntity(user)))
+                .flatMap(result -> Either.right(null));
+    }
+
+    @Override
+    public Either<GeneralError, Void> subtractFromUsersAccountBalance(UUID userId, BigDecimal positiveAmount) {
+        BigDecimal forcedPositiveAmount = positiveAmount.abs();
+        return this.fetchUser(userId)
+                .map(user -> user.withReducedBalance(forcedPositiveAmount))
+                .flatMap(user -> userRepository.updateUser(USER_MAPPER.userToUserEntity(user)))
+                .flatMap(result -> Either.right(null));
     }
 }

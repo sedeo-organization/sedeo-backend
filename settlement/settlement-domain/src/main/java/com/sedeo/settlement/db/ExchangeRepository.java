@@ -14,4 +14,6 @@ public interface ExchangeRepository {
     Either<GeneralError, List<Exchange>> find(UUID settlementId);
 
     Either<GeneralError, List<Exchange>> update(List<Exchange> exchanges, UUID groupId, UUID settlementId);
+
+    Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipant(UUID groupId, UUID participantId);
 }

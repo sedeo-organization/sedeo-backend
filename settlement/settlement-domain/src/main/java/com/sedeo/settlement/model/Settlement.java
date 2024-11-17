@@ -80,6 +80,16 @@ public record Settlement(UUID settlementId, String title, BigDecimal totalValue,
         return Either.right(new Settlement(this.settlementId, this.title, this.totalValue, this.exchanges));
     }
 
+    public Either<GeneralError, Exchange> singleExchange(UUID exchangeId) {
+        Optional<Exchange> lookedForExchange = exchanges.stream()
+                .filter(exchange -> exchange.exchangeId().equals(exchangeId))
+                .findAny();
+        if (lookedForExchange.isEmpty()) {
+            return Either.left(new SettlementGroupError.ExchangeDoesNotExist());
+        }
+        return Either.right(lookedForExchange.get());
+    }
+
     public Settlement withExchanges(List<Exchange> exchanges) {
         return new Settlement(this.settlementId, this.title, this.totalValue, exchanges);
     }
