@@ -30,7 +30,7 @@
 		<h2.version>2.3.232</h2.version>
 		<postgresql.version>42.7.4</postgresql.version>
 		<liquibase-core.version>4.29.2</liquibase-core.version>
-        <spring-context.version>6.1.13</spring-context.version>
+        <spring-context.version>6.2.0</spring-context.version>
 		<vavr.version>0.10.4</vavr.version>
 		<mapstruct.version>1.6.2</mapstruct.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
