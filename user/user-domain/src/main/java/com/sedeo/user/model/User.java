@@ -20,4 +20,8 @@ public record User(
     public User withAddedBalance(BigDecimal positiveBalance) {
         return new User(this.userId, this.firstName, this.lastName, this.phoneNumber, this.email, this.password, this.accountBalance.add(positiveBalance));
     }
+
+    public static User withZeroBalance(UUID userId, String firstName, String lastName, String phoneNumber, String email, String password) {
+        return new User(userId, firstName, lastName, phoneNumber, email, password, BigDecimal.ZERO);
+    }
 }

@@ -58,6 +58,14 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
+    public Either<GeneralError, UserEntity> findUser(String email) {
+        return Try.of(() -> singleResult(jdbcTemplate.query(USER_BY_EMAIL, USER_MAPPER, email)))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .mapLeft(DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
     public Either<GeneralError, List<UserEntity>> findUsersFriends(UUID userId) {
         return Try.of(() -> jdbcTemplate.query(Query.FRIENDS_BY_USER_IDS, USER_MAPPER, userId, userId, userId))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
@@ -150,6 +158,21 @@ public class UserJdbcRepository implements UserRepository {
                         userEntity.password(),
                         userEntity.accountBalance(),
                         userEntity.userId()))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> userEntity)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
+    public Boolean userExists(String email, String phoneNumber) {
+        return TRUE.equals(jdbcTemplate.queryForObject(Query.USER_EXISTS_BY_EMAIL_OR_PHONE_NUMBER, Boolean.class, email, phoneNumber));
+    }
+
+    @Override
+    public Either<GeneralError, UserEntity> createUser(UserEntity userEntity) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_USER, userEntity.userId(), userEntity.firstName(), userEntity.lastName(),
+                        userEntity.phoneNumber(), userEntity.email(), userEntity.password(), userEntity.accountBalance()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
                 .map(result -> userEntity)

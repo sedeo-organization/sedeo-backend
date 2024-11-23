@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,20 +31,21 @@ public class SettlementController {
     }
 
     @GetMapping("/settlement-groups")
-    public ResponseEntity<?> fetchSettlementGroups(@RequestParam(required = false) String status) {
+    public ResponseEntity<?> fetchSettlementGroups(@RequestParam(required = false) String status, Principal principal) {
         List<SettlementStatus> settlementStatuses = extractSettlementStatuses(status);
 
-        //TODO: Change UUID so that it is extracted from the token
-        return settlementGroups.fetchSettlementGroups(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"), settlementStatuses).fold(
+        UUID userId = UUID.fromString(principal.getName());
+        return settlementGroups.fetchSettlementGroups(userId, settlementStatuses).fold(
                 ResponseMapper::mapError,
                 settlementGroups -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.settlementGroupsToFetchSettlementGroupsResponse(settlementGroups))
         );
     }
 
     @PostMapping("/settlement-groups")
-    public ResponseEntity<?> createSettlementGroup(@RequestBody @Valid CreateSettlementGroupRequest createSettlementGroupRequest) {
-        //TODO: Change UUID so that it is extracted from the token
-        createSettlementGroupRequest.participantIds().add(UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"));
+    public ResponseEntity<?> createSettlementGroup(@RequestBody @Valid CreateSettlementGroupRequest createSettlementGroupRequest,
+                                                   Principal principal) {
+         UUID userId = UUID.fromString(principal.getName());
+        createSettlementGroupRequest.participantIds().add(userId);
         return settlementGroups.createSettlementGroup(
                 createSettlementGroupRequest.groupId(),
                 createSettlementGroupRequest.title(),
@@ -55,10 +57,10 @@ public class SettlementController {
     }
 
     @PostMapping("/settlement-groups/{groupId}/settlements")
-    public ResponseEntity<?> createSingleSettlement(@RequestBody @Valid CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId) {
-        //TODO: Change UUID so that it is extracted from the token
-        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
-        return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), principal, groupId)
+    public ResponseEntity<?> createSingleSettlement(@RequestBody @Valid CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId,
+                                                    Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), userId, groupId)
                 .fold(
                         ResponseMapper::mapError,
                         success -> ResponseEntity.status(CREATED).build()
@@ -66,40 +68,38 @@ public class SettlementController {
     }
 
     @GetMapping("/settlement-groups/{groupId}/settlements")
-    public ResponseEntity<?> fetchSettlements(@PathVariable("groupId") UUID groupId) {
-        //TODO: Change UUID so that it is extracted from the token
-        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
-        return settlements.fetchSettlements(groupId, principal).fold(
+    public ResponseEntity<?> fetchSettlements(@PathVariable("groupId") UUID groupId, Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        return settlements.fetchSettlements(groupId, userId).fold(
                 ResponseMapper::mapError,
                 settlements -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.simpleSettlementsToFetchSettlementsResponse(settlements))
         );
     }
 
     @GetMapping("/settlement-groups/{groupId}/settlements/{settlementId}")
-    public ResponseEntity<?> fetchSettlementDetails(@PathVariable("groupId") UUID groupId, @PathVariable("settlementId") UUID settlementId) {
-        //TODO: Change UUID so that it is extracted from the token
-        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d");
-        return settlements.fetchSettlementDetails(principal, groupId, settlementId).fold(
+    public ResponseEntity<?> fetchSettlementDetails(@PathVariable("groupId") UUID groupId, @PathVariable("settlementId") UUID settlementId,
+                                                    Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        return settlements.fetchSettlementDetails(userId, groupId, settlementId).fold(
                 ResponseMapper::mapError,
                 settlementDetails -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.detailedSettlementToFetchSettlementDetailsResponse(settlementDetails))
         );
     }
 
     @PatchMapping("/settlement-groups/{groupId}/settlements/{settlementId}/exchanges/{exchangeId}")
-    public ResponseEntity<?> settleExchange(@PathVariable UUID groupId, @PathVariable UUID settlementId, @PathVariable UUID exchangeId) {
-        //TODO: Change UUID so that it is extracted from the token
-        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e658d");
-        return settlements.settleExchange(principal, groupId, settlementId, exchangeId).fold(
+    public ResponseEntity<?> settleExchange(@PathVariable UUID groupId, @PathVariable UUID settlementId, @PathVariable UUID exchangeId,
+                                            Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        return settlements.settleExchange(userId, groupId, settlementId, exchangeId).fold(
                 ResponseMapper::mapError,
                 success -> ResponseEntity.ok().build()
         );
     }
 
     @GetMapping("/settlement-groups/{groupId}/participants")
-    public ResponseEntity<?> fetchParticipants(@PathVariable("groupId") UUID groupId) {
-        //TODO: Change UUID so that it is extracted from the token
-        UUID principal = UUID.fromString("c9d1b5f0-8a6a-4e1d-84c9-bfede64e658d");
-        return settlements.fetchParticipants(principal, groupId).fold(
+    public ResponseEntity<?> fetchParticipants(@PathVariable("groupId") UUID groupId, Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+        return settlements.fetchParticipants(userId, groupId).fold(
                 ResponseMapper::mapError,
                 participants -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.participantsToFetchParticipantsResponse(participants))
         );

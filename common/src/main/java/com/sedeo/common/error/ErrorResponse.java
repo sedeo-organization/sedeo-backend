@@ -20,4 +20,8 @@ public record ErrorResponse(Integer statusCode, String message) {
     public static ResponseEntity<ErrorResponse> conflict(String message) {
         return new ResponseEntity<>(new ErrorResponse(409, message), HttpStatus.CONFLICT);
     }
+
+    public static ResponseEntity<ErrorResponse> unauthenticated(String message){
+        return new ResponseEntity<>(new ErrorResponse(401, message), HttpStatus.UNAUTHORIZED);
+    }
 }
