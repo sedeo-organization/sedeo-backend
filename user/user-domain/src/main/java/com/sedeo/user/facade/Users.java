@@ -15,6 +15,8 @@ public interface Users {
 
     Either<GeneralError, User> fetchUser(UUID userId);
 
+    Either<GeneralError, User> fetchUser(String email);
+
     Either<GeneralError, List<User>> fetchFriends(UUID userId);
 
     Either<GeneralError, List<User>> fetchFriendInvitationUsers(UUID userId);
@@ -32,4 +34,8 @@ public interface Users {
     Either<GeneralError, Void> addToUsersAccountBalance(UUID userId, BigDecimal positiveAmount);
 
     Either<GeneralError, Void> subtractFromUsersAccountBalance(UUID userId, BigDecimal positiveAmount);
+
+    Boolean userExists(String email, String phoneNumber);
+
+    Either<GeneralError, Void> createUser(User user);
 }

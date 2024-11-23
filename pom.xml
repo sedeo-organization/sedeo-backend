@@ -16,6 +16,7 @@
         <module>common</module>
         <module>settlement</module>
 		<module>event</module>
+		<module>authentication</module>
 	</modules>
 
 	<parent>
@@ -36,6 +37,7 @@
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<spring-jdbc.version>6.1.13</spring-jdbc.version>
 		<slf4j-version>2.0.9</slf4j-version>
+		<spring-boot-starter-oauth2-resource-server.version>3.3.5</spring-boot-starter-oauth2-resource-server.version>
 	</properties>
 
 	<dependencies>

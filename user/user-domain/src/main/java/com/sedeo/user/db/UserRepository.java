@@ -15,6 +15,8 @@ public interface UserRepository {
 
     Either<GeneralError, List<UserEntity>> findUsers(List<UUID> userIds);
 
+    Either<GeneralError, UserEntity> findUser(String email);
+
     Either<GeneralError, List<UserEntity>> findUsersFriends(UUID userId);
 
     Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId, FriendInvitationEntity.InvitationStatus invitationStatus);
@@ -34,4 +36,8 @@ public interface UserRepository {
     Either<GeneralError, FriendshipEntity> createFriendship(FriendshipEntity friendshipEntity);
 
     Either<GeneralError, UserEntity> updateUser(UserEntity userEntity);
+
+    Boolean userExists(String email, String phoneNumber);
+
+    Either<GeneralError, UserEntity> createUser(UserEntity userEntity);
 }

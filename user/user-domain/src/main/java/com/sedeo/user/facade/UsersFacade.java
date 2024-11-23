@@ -36,6 +36,13 @@ public class UsersFacade implements Users {
     }
 
     @Override
+    public Either<GeneralError, User> fetchUser(String email) {
+        return userRepository.findUser(email)
+                .filterOrElse(Objects::nonNull, error -> new UserNotFoundError())
+                .map(USER_MAPPER::userEntityToUser);
+    }
+
+    @Override
     public Either<GeneralError, List<User>> fetchFriends(UUID userId) {
         return userRepository.findUsersFriends(userId)
                 .map(USER_MAPPER::userEntityListToUser);
@@ -115,6 +122,17 @@ public class UsersFacade implements Users {
         return this.fetchUser(userId)
                 .map(user -> user.withReducedBalance(forcedPositiveAmount))
                 .flatMap(user -> userRepository.updateUser(USER_MAPPER.userToUserEntity(user)))
+                .flatMap(result -> Either.right(null));
+    }
+
+    @Override
+    public Boolean userExists(String email, String phoneNumber) {
+        return userRepository.userExists(email, phoneNumber);
+    }
+
+    @Override
+    public Either<GeneralError, Void> createUser(User user) {
+        return userRepository.createUser(USER_MAPPER.userToUserEntity(user))
                 .flatMap(result -> Either.right(null));
     }
 }
