@@ -75,7 +75,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId, FriendInvitationEntity.InvitationStatus invitationStatus) {
-        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, userId, invitationStatus.toString()))
+        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, invitationStatus.toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);

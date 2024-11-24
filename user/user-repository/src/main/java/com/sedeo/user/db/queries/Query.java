@@ -23,7 +23,8 @@ public class Query {
             "(f.second_user_id = u.user_id AND f.first_user_id = ?)) " +
             "WHERE u.user_id != ?")
                     .formatted(USER_TABLE, FRIENDSHIP_TABLE);
-    public static final String FRIEND_INVITATIONS_BY_USER_ID = ("SELECT * FROM %s JOIN %s ON user_id = ? WHERE requested_user_id = ? AND invitation_status = ?")
+
+    public static final String FRIEND_INVITATIONS_BY_USER_ID = ("SELECT * FROM %s JOIN %s ON user_id = inviting_user_id WHERE requested_user_id = ? AND invitation_status = ?")
             .formatted(USER_TABLE, FRIEND_INVITATION_TABLE);
 
     public static final String POTENTIAL_FRIENDS_BY_SEARCH_PHRASE = ("WITH friends AS (" +
