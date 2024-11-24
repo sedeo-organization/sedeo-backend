@@ -44,9 +44,11 @@ public interface SettlementMapper {
     }
 
     @Mapping(source = "creditor.firstName", target = "creditorFirstName")
+    @Mapping(source = "creditor.userId", target = "creditorId")
     @Mapping(source = "creditor.lastName", target = "creditorLastName")
     @Mapping(source = "debtor.firstName", target = "debtorFirstName")
     @Mapping(source = "debtor.lastName", target = "debtorLastName")
+    @Mapping(source = "debtor.userId", target = "debtorId")
     FetchSettlementDetailsResponse.SettlementExchange exchangeWithParticipantsToFetchSettlementDetailsResponseSettlementExchange(ExchangeWithParticipants exchangeWithParticipants);
 
     List<FetchSettlementDetailsResponse.SettlementExchange> exchangeWithParticipantListToFetchSettlementDetailsResponseSettlementExchangeList(List<ExchangeWithParticipants> exchangesWithParticipants);
