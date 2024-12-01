@@ -8,7 +8,7 @@ import com.sedeo.user.db.mapper.UserMapper;
 import com.sedeo.user.db.model.FriendInvitationEntity;
 import com.sedeo.user.db.model.FriendshipEntity;
 import com.sedeo.user.db.model.UserEntity;
-import com.sedeo.user.db.queries.Query;
+import com.sedeo.user.db.queries.UserQuery;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.sedeo.user.db.queries.Query.*;
+import static com.sedeo.user.db.queries.UserQuery.*;
 import static java.lang.Boolean.TRUE;
 import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
@@ -42,7 +42,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, UserEntity> findUser(UUID userId) {
-        return Try.of(() -> singleResult(jdbcTemplate.query(Query.USER_BY_ID, USER_MAPPER, userId)))
+        return Try.of(() -> singleResult(jdbcTemplate.query(UserQuery.USER_BY_ID, USER_MAPPER, userId)))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -50,8 +50,8 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findUsers(List<UUID> userIds) {
-        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(Query.USER_IDS_PARAMETER, userIds));
-        return Try.of(() -> namedParameterJdbcOperations.query(Query.USERS_BY_IDS, parameters, USER_MAPPER))
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(UserQuery.USER_IDS_PARAMETER, userIds));
+        return Try.of(() -> namedParameterJdbcOperations.query(UserQuery.USERS_BY_IDS, parameters, USER_MAPPER))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -67,7 +67,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findUsersFriends(UUID userId) {
-        return Try.of(() -> jdbcTemplate.query(Query.FRIENDS_BY_USER_IDS, USER_MAPPER, userId, userId, userId))
+        return Try.of(() -> jdbcTemplate.query(UserQuery.FRIENDS_BY_USER_IDS, USER_MAPPER, userId, userId, userId))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -75,7 +75,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findFriendInvitationUsers(UUID userId, FriendInvitationEntity.InvitationStatus invitationStatus) {
-        return Try.of(() -> jdbcTemplate.query(Query.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, invitationStatus.toString()))
+        return Try.of(() -> jdbcTemplate.query(UserQuery.FRIEND_INVITATIONS_BY_USER_ID, USER_MAPPER, userId, invitationStatus.toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -83,9 +83,9 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Either<GeneralError, List<UserEntity>> findUsersPotentialFriends(UUID userId, String searchPhrase) {
-        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(Query.CURRENT_USER_ID_PARAMETER, userId,
-                Query.SEARCH_PHRASE_PARAMETER, "%" + searchPhrase + "%"));
-        return Try.of(() -> namedParameterJdbcOperations.query(Query.POTENTIAL_FRIENDS_BY_SEARCH_PHRASE, parameters, USER_MAPPER))
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(UserQuery.CURRENT_USER_ID_PARAMETER, userId,
+                UserQuery.SEARCH_PHRASE_PARAMETER, "%" + searchPhrase + "%"));
+        return Try.of(() -> namedParameterJdbcOperations.query(UserQuery.POTENTIAL_FRIENDS_BY_SEARCH_PHRASE, parameters, USER_MAPPER))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseReadUnsuccessfulError::new);
@@ -93,12 +93,12 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Boolean friendsExist(UUID firstUserId, UUID secondUserId) {
-        return TRUE.equals(jdbcTemplate.queryForObject(Query.FRIENDS_EXIST_BY_IDS, Boolean.class, firstUserId, secondUserId, secondUserId, firstUserId));
+        return TRUE.equals(jdbcTemplate.queryForObject(UserQuery.FRIENDS_EXIST_BY_IDS, Boolean.class, firstUserId, secondUserId, secondUserId, firstUserId));
     }
 
     @Override
     public Either<GeneralError, FriendInvitationEntity> findFriendInvitation(UUID invitingUserId, UUID requestedUserId, FriendInvitationEntity.InvitationStatus invitationStatus) {
-        return Try.of(() -> singleResult(jdbcTemplate.query(Query.FRIEND_INVITATION_BY_USER_IDS, FRIEND_INVITATION_MAPPER,
+        return Try.of(() -> singleResult(jdbcTemplate.query(UserQuery.FRIEND_INVITATION_BY_USER_IDS, FRIEND_INVITATION_MAPPER,
                         invitingUserId, requestedUserId, invitationStatus.toString())))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
@@ -120,7 +120,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Boolean friendInvitationExists(UUID invitingUser, UUID requestedUserId) {
-        return TRUE.equals(jdbcTemplate.queryForObject(Query.FRIEND_INVITATION_EXISTS_BY_IDS, Boolean.class, invitingUser, requestedUserId));
+        return TRUE.equals(jdbcTemplate.queryForObject(UserQuery.FRIEND_INVITATION_EXISTS_BY_IDS, Boolean.class, invitingUser, requestedUserId));
     }
 
     @Override
@@ -166,7 +166,7 @@ public class UserJdbcRepository implements UserRepository {
 
     @Override
     public Boolean userExists(String email, String phoneNumber) {
-        return TRUE.equals(jdbcTemplate.queryForObject(Query.USER_EXISTS_BY_EMAIL_OR_PHONE_NUMBER, Boolean.class, email, phoneNumber));
+        return TRUE.equals(jdbcTemplate.queryForObject(UserQuery.USER_EXISTS_BY_EMAIL_OR_PHONE_NUMBER, Boolean.class, email, phoneNumber));
     }
 
     @Override

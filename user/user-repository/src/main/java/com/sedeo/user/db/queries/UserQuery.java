@@ -1,6 +1,6 @@
 package com.sedeo.user.db.queries;
 
-public class Query {
+public class UserQuery {
 
     private static final String USER_TABLE = "user_user";
     private static final String FRIENDSHIP_TABLE = "user_friendship";
