@@ -1,13 +1,14 @@
 package com.sedeo.controllers;
 
-import com.sedeo.controllers.dto.ChangeFriendInvitationStatus;
-import com.sedeo.controllers.dto.CreateFriendInvitationRequest;
-import com.sedeo.controllers.dto.FetchPotentialFriendsRequest;
-import com.sedeo.controllers.dto.UserControllerMapper;
+import com.sedeo.cloudapi.azure.email.Mail;
+import com.sedeo.cloudapi.azure.email.model.MailRequest;
+import com.sedeo.cloudapi.azure.email.model.ResetPasswordMessageTemplate;
+import com.sedeo.controllers.dto.*;
 import com.sedeo.user.facade.Users;
 import com.sedeo.user.model.InvitationStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -17,10 +18,18 @@ import java.util.UUID;
 public class UserController {
 
     private static final UserControllerMapper USER_CONTROLLER_MAPPER = UserControllerMapper.INSTANCE;
-    private final Users users;
+    private static final String PASSWORD_RESET_REQUEST = "Password reset request";
 
-    public UserController(Users users) {
+    private final Users users;
+    private final Mail mail;
+    private final ResetPasswordMessageTemplate resetPasswordMessageTemplate;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserController(Users users, Mail mail, ResetPasswordMessageTemplate resetPasswordMessageTemplate, PasswordEncoder passwordEncoder) {
         this.users = users;
+        this.mail = mail;
+        this.resetPasswordMessageTemplate = resetPasswordMessageTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users/me")
@@ -32,7 +41,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("users/friends")
+    @GetMapping("/users/friends")
     public ResponseEntity<?> fetchUserFriends(Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
         return users.fetchFriends(userId).fold(
@@ -41,7 +50,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("users/friend-requests")
+    @GetMapping("/users/friend-requests")
     public ResponseEntity<?> fetchUserFriendRequests(Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
         return users.fetchFriendInvitationUsers(userId).fold(
@@ -50,7 +59,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("users/potential-friends")
+    @GetMapping("/users/potential-friends")
     public ResponseEntity<?> fetchUserPotentialFriends(@RequestParam(name = "search_phrase") FetchPotentialFriendsRequest fetchPotentialFriendsRequest,
                                                        Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
@@ -60,7 +69,7 @@ public class UserController {
         );
     }
 
-    @PostMapping("users/friend-requests")
+    @PostMapping("/users/friend-requests")
     public ResponseEntity<?> createFriendRequest(@RequestBody CreateFriendInvitationRequest createFriendInvitationRequest,
                                                  Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
@@ -70,15 +79,38 @@ public class UserController {
         );
     }
 
-    @PatchMapping("users/friend-requests")
+    @PatchMapping("/users/friend-requests")
     public ResponseEntity<?> acceptOrRejectFriendInvitation(@RequestBody ChangeFriendInvitationStatus changeFriendInvitationStatus,
                                                             Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
         return users.changeFriendInvitationStatus(userId,
                 changeFriendInvitationStatus.invitingUserId(),
                 InvitationStatus.valueOf(changeFriendInvitationStatus.status().toString())).fold(
-                        ResponseMapper::mapError,
-                        potentialFriends -> ResponseEntity.status(HttpStatus.CREATED).build()
+                ResponseMapper::mapError,
+                potentialFriends -> ResponseEntity.status(HttpStatus.CREATED).build()
         );
+    }
+
+    @PostMapping("/users/password")
+    public ResponseEntity<?> createPasswordResetToken(@RequestBody PasswordResetTokenRequest passwordResetTokenRequest) {
+        return users.createPasswordResetToken(passwordResetTokenRequest.email())
+                .fold(
+                        ResponseMapper::mapError,
+                        passwordResetToken -> {
+                            resetPasswordMessageTemplate.withResetPasswordMessage(
+                                            passwordResetToken.firstName(), passwordResetToken.lastName(), passwordResetToken.token().toString())
+                                    .ifPresent(message -> mail.sendMail(new MailRequest(passwordResetToken.email(), PASSWORD_RESET_REQUEST, message)));
+                            return ResponseEntity.status(HttpStatus.CREATED).build();
+                        }
+                );
+    }
+
+    @PatchMapping("/users/password")
+    public ResponseEntity<?> resetUsersPassword(@RequestBody ResetUsersPasswordRequest resetUsersPasswordRequest) {
+        return users.changeUsersPassword(resetUsersPasswordRequest.token(), passwordEncoder.encode(resetUsersPasswordRequest.password()))
+                .fold(
+                        ResponseMapper::mapError,
+                        success -> ResponseEntity.status(HttpStatus.OK).build()
+                );
     }
 }

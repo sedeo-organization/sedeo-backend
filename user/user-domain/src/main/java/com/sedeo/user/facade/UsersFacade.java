@@ -1,13 +1,14 @@
 package com.sedeo.user.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.user.db.PasswordResetTokenRepository;
 import com.sedeo.user.db.UserRepository;
 import com.sedeo.user.db.model.FriendInvitationEntity;
 import com.sedeo.user.db.model.FriendshipEntity;
 import com.sedeo.user.model.*;
+import com.sedeo.user.model.error.UserError.FriendInvitationIsPending;
 import com.sedeo.user.model.error.UserError.FriendsAlreadyExist;
 import com.sedeo.user.model.error.UserError.UserNotFoundError;
-import com.sedeo.user.model.error.UserError.FriendInvitationIsPending;
 import io.vavr.control.Either;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +24,11 @@ public class UsersFacade implements Users {
     private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
 
     private final UserRepository userRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
-    public UsersFacade(UserRepository userRepository) {
+    public UsersFacade(UserRepository userRepository, PasswordResetTokenRepository passwordResetTokenRepository) {
         this.userRepository = userRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @Override
@@ -134,5 +137,30 @@ public class UsersFacade implements Users {
     public Either<GeneralError, Void> createUser(User user) {
         return userRepository.createUser(USER_MAPPER.userToUserEntity(user))
                 .flatMap(result -> Either.right(null));
+    }
+
+    @Override
+    public Either<GeneralError, PasswordResetToken> createPasswordResetToken(String email) {
+        return this.fetchUser(email)
+                .map(user -> PasswordResetToken.randomUnusedToken(user.userId(), user.firstName(), user.lastName(), user.email()))
+                .map(USER_MAPPER::passwordResetTokenToPasswordResetTokenEntity)
+                .flatMap(passwordResetTokenRepository::save)
+                .map(USER_MAPPER::passwordResetTokenEntityToPasswordResetToken);
+    }
+
+    @Override
+    @Transactional
+    public Either<GeneralError, User> changeUsersPassword(UUID token, String newPassword) {
+        return passwordResetTokenRepository.find(token)
+                .map(USER_MAPPER::passwordResetTokenEntityToPasswordResetToken)
+                .flatMap(PasswordResetToken::useToken)
+                .map(USER_MAPPER::passwordResetTokenToPasswordResetTokenEntity)
+                .flatMap(passwordResetTokenRepository::update)
+                .flatMap(updatedToken -> userRepository.findUser(updatedToken.userId()))
+                .map(USER_MAPPER::userEntityToUser)
+                .map(user -> user.withNewPassword(newPassword))
+                .map(USER_MAPPER::userToUserEntity)
+                .flatMap(userRepository::updateUser)
+                .map(USER_MAPPER::userEntityToUser);
     }
 }

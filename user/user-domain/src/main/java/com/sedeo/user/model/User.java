@@ -24,4 +24,8 @@ public record User(
     public static User withZeroBalance(UUID userId, String firstName, String lastName, String phoneNumber, String email, String password) {
         return new User(userId, firstName, lastName, phoneNumber, email, password, BigDecimal.ZERO);
     }
+
+    public User withNewPassword(String newPassword) {
+        return new User(this.userId, this.firstName, this.lastName, this.phoneNumber, this.email, newPassword, this.accountBalance);
+    }
 }

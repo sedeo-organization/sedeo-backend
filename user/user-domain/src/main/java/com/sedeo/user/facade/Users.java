@@ -1,10 +1,7 @@
 package com.sedeo.user.facade;
 
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.user.model.FriendInvitation;
-import com.sedeo.user.model.Friendship;
-import com.sedeo.user.model.InvitationStatus;
-import com.sedeo.user.model.User;
+import com.sedeo.user.model.*;
 import io.vavr.control.Either;
 
 import java.math.BigDecimal;
@@ -38,4 +35,8 @@ public interface Users {
     Boolean userExists(String email, String phoneNumber);
 
     Either<GeneralError, Void> createUser(User user);
+
+    Either<GeneralError, PasswordResetToken> createPasswordResetToken(String email);
+
+    Either<GeneralError, User> changeUsersPassword(UUID token, String newPassword);
 }
