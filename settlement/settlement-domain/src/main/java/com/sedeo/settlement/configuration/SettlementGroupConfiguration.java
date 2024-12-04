@@ -1,13 +1,12 @@
 package com.sedeo.settlement.configuration;
 
 import com.sedeo.settlement.db.ExchangeRepository;
-import com.sedeo.settlement.db.SettlementGroupRepository;
 import com.sedeo.settlement.db.ParticipantRepository;
+import com.sedeo.settlement.db.SettlementGroupRepository;
 import com.sedeo.settlement.db.SettlementRepository;
 import com.sedeo.settlement.facade.*;
 import com.sedeo.settlement.listener.SettlementEventListener;
 import com.sedeo.user.facade.Users;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,8 @@ public class SettlementGroupConfiguration {
 
     @Bean
     SettlementGroups settlementGroups(SettlementGroupRepository settlementGroupRepository, ParticipantRepository participantRepository,
-                                      Users users) {
-        return new SettlementGroupsFacade(settlementGroupRepository, participantRepository, users);
+                                      Users users, ExchangeRepository exchangeRepository) {
+        return new SettlementGroupsFacade(settlementGroupRepository, participantRepository, users, exchangeRepository);
     }
 
     @Bean

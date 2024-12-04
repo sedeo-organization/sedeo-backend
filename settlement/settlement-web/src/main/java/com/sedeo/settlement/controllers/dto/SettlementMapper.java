@@ -7,6 +7,7 @@ import com.sedeo.settlement.model.SettlementGroup;
 import com.sedeo.settlement.model.view.DetailedSettlement;
 import com.sedeo.settlement.model.view.ExchangeWithParticipants;
 import com.sedeo.settlement.model.view.SimpleSettlement;
+import com.sedeo.settlement.model.view.SummaryExchange;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -63,5 +64,14 @@ public interface SettlementMapper {
     default FetchParticipantsResponse participantsToFetchParticipantsResponse(List<Participant> participants) {
         List<FetchParticipantsResponse.Participant> fetchParticipantsResponseParticipantList = participantListToFetchParticipantsResponseParticipantList(participants);
         return new FetchParticipantsResponse(fetchParticipantsResponseParticipantList);
+    }
+
+    FetchSettlementGroupSummaryResponse.SummaryExchange summaryExchangeToFetchSettlementGroupSummaryResponseSummaryExchange(SummaryExchange summaryExchange);
+
+    List<FetchSettlementGroupSummaryResponse.SummaryExchange> summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(List<SummaryExchange> summaryExchanges);
+
+    default FetchSettlementGroupSummaryResponse summaryExchangesToFetchSettlementGroupSummaryResponse(List<SummaryExchange> summaryExchanges) {
+        List<FetchSettlementGroupSummaryResponse.SummaryExchange> fetchSettlementGroupSummaryResponseSummaryExchanges = summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(summaryExchanges);
+        return new FetchSettlementGroupSummaryResponse(fetchSettlementGroupSummaryResponseSummaryExchanges);
     }
 }

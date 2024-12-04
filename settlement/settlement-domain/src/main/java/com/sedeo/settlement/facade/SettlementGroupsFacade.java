@@ -1,12 +1,16 @@
 package com.sedeo.settlement.facade;
 
 import com.sedeo.common.error.GeneralError;
+import com.sedeo.settlement.db.ExchangeRepository;
 import com.sedeo.settlement.db.ParticipantRepository;
 import com.sedeo.settlement.db.SettlementGroupRepository;
+import com.sedeo.settlement.model.ExchangeStatus;
 import com.sedeo.settlement.model.Participant;
 import com.sedeo.settlement.model.SettlementGroup;
 import com.sedeo.settlement.model.SettlementStatus;
+import com.sedeo.settlement.model.error.SettlementGroupError;
 import com.sedeo.settlement.model.error.SettlementGroupError.SettlementGroupAlreadyExists;
+import com.sedeo.settlement.model.view.SummaryExchange;
 import com.sedeo.user.facade.Users;
 import com.sedeo.user.model.User;
 import io.vavr.control.Either;
@@ -22,13 +26,15 @@ public class SettlementGroupsFacade implements SettlementGroups {
 
     private final SettlementGroupRepository settlementGroupRepository;
     private final ParticipantRepository participantRepository;
+    private final ExchangeRepository exchangeRepository;
     private final Users users;
 
     public SettlementGroupsFacade(SettlementGroupRepository settlementGroupRepository, ParticipantRepository participantRepository,
-                                  Users users) {
+                                  Users users, ExchangeRepository exchangeRepository) {
         this.settlementGroupRepository = settlementGroupRepository;
         this.participantRepository = participantRepository;
         this.users = users;
+        this.exchangeRepository = exchangeRepository;
     }
 
     @Override
@@ -53,5 +59,14 @@ public class SettlementGroupsFacade implements SettlementGroups {
                 .flatMap(participantRepository::save)
                 .flatMap(participants -> settlementGroupRepository.save(settlementGroup))
                 .flatMap(groups -> Either.right(null));
+    }
+
+    @Override
+    public Either<GeneralError, List<SummaryExchange>> fetchSettlementGroupSummary(UUID groupId, UUID userId, List<ExchangeStatus> statuses) {
+        if (!participantRepository.exists(groupId, userId)) {
+            return Either.left(new SettlementGroupError.UserNotAuthorized());
+        }
+
+        return exchangeRepository.aggregateExchangesGroupSummary(groupId, statuses);
     }
 }

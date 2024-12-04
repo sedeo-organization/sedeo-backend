@@ -5,6 +5,7 @@ import com.sedeo.settlement.controllers.dto.CreateSingleSettlementRequest;
 import com.sedeo.settlement.controllers.dto.SettlementMapper;
 import com.sedeo.settlement.facade.SettlementGroups;
 import com.sedeo.settlement.facade.Settlements;
+import com.sedeo.settlement.model.ExchangeStatus;
 import com.sedeo.settlement.model.SettlementStatus;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -105,6 +106,17 @@ public class SettlementController {
         );
     }
 
+    @GetMapping("/settlement-groups/{groupId}/summary")
+    public ResponseEntity<?> fetchSettlementGroupSummary(@RequestParam(name = "status", required = false) String status, @PathVariable("groupId") UUID groupId, Principal principal) {
+        List<ExchangeStatus> exchangeStatuses = extractExchangeStatuses(status);
+
+        UUID userId = UUID.fromString(principal.getName());
+        return settlementGroups.fetchSettlementGroupSummary(groupId, userId, exchangeStatuses).fold(
+                ResponseMapper::mapError,
+                summaries -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.summaryExchangesToFetchSettlementGroupSummaryResponse(summaries))
+        );
+    }
+
     private static List<SettlementStatus> extractSettlementStatuses(String status) {
         if (Objects.equals(status, SettlementStatus.PENDING.name().toLowerCase())) {
             return List.of(SettlementStatus.PENDING);
@@ -112,6 +124,16 @@ public class SettlementController {
             return List.of(SettlementStatus.SETTLED);
         } else {
             return List.of(SettlementStatus.SETTLED, SettlementStatus.PENDING);
+        }
+    }
+
+    private static List<ExchangeStatus> extractExchangeStatuses(String status) {
+        if (Objects.equals(status, ExchangeStatus.PENDING.name().toLowerCase())) {
+            return List.of(ExchangeStatus.PENDING);
+        } else if (Objects.equals(status, ExchangeStatus.SETTLED.name().toLowerCase())) {
+            return List.of(ExchangeStatus.SETTLED);
+        } else {
+            return List.of(ExchangeStatus.SETTLED, ExchangeStatus.PENDING);
         }
     }
 }

@@ -4,30 +4,41 @@ import com.sedeo.common.error.DatabaseError;
 import com.sedeo.common.error.DatabaseError.DatabaseWriteUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.settlement.db.mapper.ExchangeEntityMapper;
+import com.sedeo.settlement.db.mapper.SummaryExchangeMapper;
 import com.sedeo.settlement.db.modelmapper.ExchangeMapper;
 import com.sedeo.settlement.model.Exchange;
+import com.sedeo.settlement.model.ExchangeStatus;
+import com.sedeo.settlement.model.view.SummaryExchange;
 import io.vavr.collection.Traversable;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.sedeo.settlement.db.queries.ExchangeQuery.*;
+import static com.sedeo.settlement.db.queries.ParticipantQuery.STATUSES_PARAMETER;
 
 public class ExchangeJdbcRepository implements ExchangeRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeJdbcRepository.class);
     private static final ExchangeEntityMapper EXCHANGE_ENTITY_MAPPER = new ExchangeEntityMapper();
+    private static final SummaryExchangeMapper SUMMARY_EXCHANGE_MAPPER = new SummaryExchangeMapper();
     private static final ExchangeMapper EXCHANGE_MAPPER = ExchangeMapper.INSTANCE;
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public ExchangeJdbcRepository(JdbcTemplate jdbcTemplate) {
+    public ExchangeJdbcRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
@@ -59,6 +70,19 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .map(EXCHANGE_MAPPER::exchangeEntityListToExchangeList)
+                .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, List<SummaryExchange>> aggregateExchangesGroupSummary(UUID groupId, List<ExchangeStatus> statuses) {
+        List<String> exchangeStatuses = statuses.stream().map(Enum::toString).toList();
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(
+                GROUP_ID_PARAMETER, groupId,
+                STATUSES_PARAMETER, exchangeStatuses));
+
+        return Try.of(() -> namedParameterJdbcTemplate.query(AGGREGATE_EXCHANGES_SUMMARY, parameters, SUMMARY_EXCHANGE_MAPPER))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
                 .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
     }
 
