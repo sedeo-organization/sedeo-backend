@@ -6,6 +6,8 @@ public record ExchangeQuery() {
 
     public static final String STATUSES_PARAMETER = "statuses";
     public static final String GROUP_ID_PARAMETER = "group_id";
+    public static final String CREDITOR_USER_ID_PARAMETER = "creditorUserId";
+    public static final String DEBTOR_USER_ID_PARAMETER = "debtorUserId";
 
     public static final String SAVE_EXCHANGE = "INSERT INTO %s VALUES(?, ?, ?, ?, ?, ?, ?)"
             .formatted(EXCHANGE_TABLE);
@@ -17,8 +19,15 @@ public record ExchangeQuery() {
             " exchange_value = ?, status = ? WHERE exchange_id = ?")
             .formatted(EXCHANGE_TABLE);
 
-    public static final String EXCHANGES_BY_GROUP_ID_AND_USER_ID = ("SELECT * FROM %S WHERE group_id = ? AND (creditor_user_id = ? OR debtor_user_id = ?)")
+    public static final String UPDATE_EXCHANGE_STATUS = ("UPDATE %s SET status = ? WHERE exchange_id = ?")
             .formatted(EXCHANGE_TABLE);
+
+    public static final String EXCHANGES_BY_GROUP_ID_AND_USER_ID = ("SELECT * FROM %s WHERE group_id = ? AND (creditor_user_id = ? OR debtor_user_id = ?)")
+            .formatted(EXCHANGE_TABLE);
+
+    public static final String EXCHANGES_BY_GROUP_ID_AND_USER_IDS = ("SELECT * FROM %s WHERE group_id = :%s AND (creditor_user_id = :%s AND debtor_user_id = :%s) OR (creditor_user_id = :%s AND debtor_user_id = :%s) " +
+            "AND status IN (:%s)")
+            .formatted(EXCHANGE_TABLE, GROUP_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, DEBTOR_USER_ID_PARAMETER, DEBTOR_USER_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, STATUSES_PARAMETER);
 
     public static final String AGGREGATE_EXCHANGES_SUMMARY = ("""
                 WITH PairwiseSum AS (

@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,8 +66,40 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
     }
 
     @Override
+    public Either<GeneralError, List<Exchange>> updateExchangesStatus(List<Exchange> exchanges) {
+        List<Object[]> batchedExchanges = new ArrayList<>();
+        for (Exchange exchange : exchanges) {
+            Object[] values = new Object[] {
+                    exchange.status().name(), exchange.exchangeId()};
+            batchedExchanges.add(values);
+        }
+        return Try.of(() -> jdbcTemplate.batchUpdate(UPDATE_EXCHANGE_STATUS, batchedExchanges))
+                .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
+                .toEither()
+                .map(result -> exchanges)
+                .mapLeft(DatabaseWriteUnsuccessfulError::new);
+    }
+
+    @Override
     public Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipant(UUID groupId, UUID participantId) {
         return Try.of(() -> jdbcTemplate.query(EXCHANGES_BY_GROUP_ID_AND_USER_ID, EXCHANGE_ENTITY_MAPPER, groupId, participantId, participantId))
+                .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
+                .toEither()
+                .map(EXCHANGE_MAPPER::exchangeEntityListToExchangeList)
+                .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);
+    }
+
+    @Override
+    public Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipantsWithinGroupByStatuses(UUID groupId, UUID firstParticipantId,
+                                                                                                        UUID secondParticipantId, List<ExchangeStatus> statuses) {
+        List<String> exchangeStatuses = statuses.stream().map(Enum::toString).toList();
+        SqlParameterSource parameters = new MapSqlParameterSource(Map.of(
+                GROUP_ID_PARAMETER, groupId,
+                CREDITOR_USER_ID_PARAMETER, firstParticipantId,
+                DEBTOR_USER_ID_PARAMETER, secondParticipantId,
+                STATUSES_PARAMETER, exchangeStatuses));
+
+        return Try.of(() -> namedParameterJdbcTemplate.query(EXCHANGES_BY_GROUP_ID_AND_USER_IDS, parameters, EXCHANGE_ENTITY_MAPPER))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .map(EXCHANGE_MAPPER::exchangeEntityListToExchangeList)

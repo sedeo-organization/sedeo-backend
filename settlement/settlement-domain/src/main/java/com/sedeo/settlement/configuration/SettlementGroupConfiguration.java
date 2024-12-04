@@ -35,4 +35,9 @@ public class SettlementGroupConfiguration {
     SettlementEventListener settlementEventListener(Participants participants) {
         return new SettlementEventListener(participants);
     }
+
+    @Bean
+    Exchanges exchanges(ExchangeRepository exchangeRepository, ParticipantRepository participantRepository, ApplicationEventPublisher applicationEventPublisher) {
+        return new ExchangesFacade(exchangeRepository, participantRepository, applicationEventPublisher);
+    }
 }

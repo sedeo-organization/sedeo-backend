@@ -1,10 +1,12 @@
 package com.sedeo.settlement.controllers;
 
+import com.sedeo.settlement.controllers.dto.BulkSettleGroupExchangesRequest;
 import com.sedeo.settlement.controllers.dto.CreateSettlementGroupRequest;
 import com.sedeo.settlement.controllers.dto.CreateSingleSettlementRequest;
 import com.sedeo.settlement.controllers.dto.SettlementMapper;
 import com.sedeo.settlement.facade.SettlementGroups;
 import com.sedeo.settlement.facade.Settlements;
+import com.sedeo.settlement.facade.Exchanges;
 import com.sedeo.settlement.model.ExchangeStatus;
 import com.sedeo.settlement.model.SettlementStatus;
 import jakarta.validation.Valid;
@@ -25,10 +27,12 @@ public class SettlementController {
 
     private final SettlementGroups settlementGroups;
     private final Settlements settlements;
+    private final Exchanges exchanges;
 
-    public SettlementController(SettlementGroups settlementGroups, Settlements settlements) {
+    public SettlementController(SettlementGroups settlementGroups, Settlements settlements, Exchanges exchanges) {
         this.settlementGroups = settlementGroups;
         this.settlements = settlements;
+        this.exchanges = exchanges;
     }
 
     @GetMapping("/settlement-groups")
@@ -45,7 +49,7 @@ public class SettlementController {
     @PostMapping("/settlement-groups")
     public ResponseEntity<?> createSettlementGroup(@RequestBody @Valid CreateSettlementGroupRequest createSettlementGroupRequest,
                                                    Principal principal) {
-         UUID userId = UUID.fromString(principal.getName());
+        UUID userId = UUID.fromString(principal.getName());
         createSettlementGroupRequest.participantIds().add(userId);
         return settlementGroups.createSettlementGroup(
                 createSettlementGroupRequest.groupId(),
@@ -114,6 +118,18 @@ public class SettlementController {
         return settlementGroups.fetchSettlementGroupSummary(groupId, userId, exchangeStatuses).fold(
                 ResponseMapper::mapError,
                 summaries -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.summaryExchangesToFetchSettlementGroupSummaryResponse(summaries))
+        );
+    }
+
+    @PatchMapping("/settlement-groups/{groupId}/summary")
+    public ResponseEntity<?> bulkSettleGroupExchanges(@RequestBody BulkSettleGroupExchangesRequest bulkSettleGroupExchangesRequest,
+                                                      @PathVariable("groupId") UUID groupId, Principal principal) {
+        UUID userId = UUID.fromString(principal.getName());
+
+        return exchanges.bulkSettleExchangesForParticipantsWithinGroup(groupId, bulkSettleGroupExchangesRequest.debtorUserId(),
+                bulkSettleGroupExchangesRequest.creditorUserId(), userId).fold(
+                        ResponseMapper::mapError,
+                success -> ResponseEntity.ok().build()
         );
     }
 
