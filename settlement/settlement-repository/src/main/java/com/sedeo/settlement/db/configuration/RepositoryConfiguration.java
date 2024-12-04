@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @Configuration
 public class RepositoryConfiguration {
@@ -20,8 +21,8 @@ public class RepositoryConfiguration {
     }
 
     @Bean
-    ExchangeRepository exchangeRepository(JdbcTemplate jdbcTemplate) {
-        return new ExchangeJdbcRepository(jdbcTemplate);
+    ExchangeRepository exchangeRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        return new ExchangeJdbcRepository(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
     @Bean
