@@ -9,7 +9,7 @@ public class UserQuery {
     public static final String SEARCH_PHRASE_PARAMETER = "searchPhrase";
     public static final String CURRENT_USER_ID_PARAMETER = "currentUserId";
 
-    public static final String USER_BY_ID = "SELECT * FROM %s WHERE user_id = ?"
+    public static final String USER_BY_ID = "SELECT * FROM %s WHERE user_id = ? FOR UPDATE"
             .formatted(USER_TABLE);
 
     public static final String USER_BY_EMAIL = "SELECT * FROM %s WHERE email = ?"
