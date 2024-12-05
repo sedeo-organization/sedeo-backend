@@ -111,6 +111,7 @@ public class UsersFacade implements Users {
     }
 
     @Override
+    @Transactional
     public Either<GeneralError, Void> addToUsersAccountBalance(UUID userId, BigDecimal positiveAmount) {
         BigDecimal forcedPositiveAmount = positiveAmount.abs();
         return this.fetchUser(userId)
@@ -120,6 +121,7 @@ public class UsersFacade implements Users {
     }
 
     @Override
+    @Transactional
     public Either<GeneralError, Void> subtractFromUsersAccountBalance(UUID userId, BigDecimal positiveAmount) {
         BigDecimal forcedPositiveAmount = positiveAmount.abs();
         return this.fetchUser(userId)
