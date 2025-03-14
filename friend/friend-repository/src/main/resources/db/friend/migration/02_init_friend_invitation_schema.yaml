@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02_init_friendship_invitation_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: friend_friendship_invitation
+            columns:
+              - column:
+                  name: friendship_invitation_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: inviting_user_id
+                  type: uuid
+              - column:
+                  name: invited_user_id
+                  type: uuid
+              - column:
+                  name: invitation_status
+                  type: text
+  - changeSet:
+      id: 02_init_example_friendship_invitation_data
+      author: dabkowski
+      context: dev
+      changes:
+        - insert:
+            tableName: friend_friendship_invitation
+            columns:
+              - column:
+                  name: friendship_invitation_id
+                  value: "ce5c6f7b-a293-4362-b7b6-e965fd9e66af"
+              - column:
+                  name: inviting_user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e659d"
+              - column:
+                  name: invited_user_id
+                  value: "c9d1b5f0-8a6a-4e1d-84c9-bfede64e657d"
+              - column:
+                  name: invitation_status
+                  value: "PENDING"

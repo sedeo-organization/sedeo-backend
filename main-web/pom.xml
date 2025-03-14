@@ -98,6 +98,21 @@
         </dependency>
         <dependency>
             <groupId>com.sedeo</groupId>
+            <artifactId>friend-domain</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sedeo</groupId>
+            <artifactId>friend-repository</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sedeo</groupId>
+            <artifactId>friend-web</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sedeo</groupId>
             <artifactId>authentication-web</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

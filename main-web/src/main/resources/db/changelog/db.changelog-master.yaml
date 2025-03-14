@@ -3,3 +3,5 @@ databaseChangeLog:
       path: db/user/changelog
   - includeAll:
       path: db/settlement/changelog
+  - includeAll:
+      path: db/friend/changelog

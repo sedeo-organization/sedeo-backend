@@ -14,18 +14,6 @@ public interface Users {
 
     Either<GeneralError, User> fetchUser(String email);
 
-    Either<GeneralError, List<User>> fetchFriends(UUID userId);
-
-    Either<GeneralError, List<User>> fetchFriendInvitationUsers(UUID userId);
-
-    Either<GeneralError, List<User>> fetchUsersPotentialFriends(UUID userId, String searchPhrase);
-
-    Either<GeneralError, FriendInvitation> createFriendInvitation(UUID invitingUserId, UUID recipientUserId);
-
-    Either<GeneralError, FriendInvitation> changeFriendInvitationStatus(UUID requestedUserId, UUID invitingUserId, InvitationStatus status);
-
-    Either<GeneralError, Friendship> createFriendship(UUID firstUserId, UUID secondUserId);
-
     Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds);
 
     Either<GeneralError, Void> addToUsersAccountBalance(UUID userId, BigDecimal positiveAmount);

@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 00_init_friend_schema
+      author: dabkowski
+      changes:
+        - createTable:
+            tableName: friend_friend
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: text
+              - column:
+                  name: last_name
+                  type: text
+              - column:
+                  name: phone_number
+                  type: text

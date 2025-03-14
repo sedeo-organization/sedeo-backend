@@ -5,6 +5,7 @@ import com.sedeo.user.db.UserRepository;
 import com.sedeo.user.facade.Users;
 import com.sedeo.user.facade.UsersFacade;
 import com.sedeo.user.listener.UserEventListener;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +13,9 @@ import org.springframework.context.annotation.Configuration;
 public class UsersConfiguration {
 
     @Bean
-    Users users(UserRepository userRepository, PasswordResetTokenRepository passwordResetTokenRepository) {
-        return new UsersFacade(userRepository, passwordResetTokenRepository);
+    Users users(UserRepository userRepository, PasswordResetTokenRepository passwordResetTokenRepository,
+                ApplicationEventPublisher applicationEventPublisher) {
+        return new UsersFacade(userRepository, passwordResetTokenRepository, applicationEventPublisher);
     }
 
     @Bean
