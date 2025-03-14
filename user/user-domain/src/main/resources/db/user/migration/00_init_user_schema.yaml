@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 00_init_reception_schema
+      id: 00_init_user_schema
       author: dabkowski
       changes:
         - createTable:

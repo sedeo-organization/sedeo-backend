@@ -18,6 +18,7 @@
 		<module>event</module>
 		<module>authentication</module>
         <module>cloud</module>
+		<module>friend</module>
 	</modules>
 
 	<parent>

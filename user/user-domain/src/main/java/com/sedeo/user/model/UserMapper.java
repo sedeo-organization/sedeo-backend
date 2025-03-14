@@ -1,7 +1,5 @@
 package com.sedeo.user.model;
 
-import com.sedeo.user.db.model.FriendInvitationEntity;
-import com.sedeo.user.db.model.FriendshipEntity;
 import com.sedeo.user.db.model.PasswordResetTokenEntity;
 import com.sedeo.user.db.model.UserEntity;
 import org.mapstruct.Mapper;
@@ -21,16 +19,6 @@ public interface UserMapper {
     List<User> userEntitiesToUsers(List<UserEntity> userEntities);
 
     List<User> userEntityListToUser(List<UserEntity> userEntities);
-
-    FriendshipEntity friendshipToFriendshipEntity(Friendship friendship);
-
-    Friendship friendshipEntityToFriendship(FriendshipEntity friendshipEntity);
-
-    List<Friendship> friendshipEntityListToFriendshipList(List<FriendshipEntity> friendshipEntityList);
-
-    FriendInvitation friendInvitationEntityToFriendInvitation(FriendInvitationEntity friendInvitationEntity);
-
-    FriendInvitationEntity friendInvitationToFriendInvitationEntity(FriendInvitation friendInvitation);
 
     PasswordResetTokenEntity passwordResetTokenToPasswordResetTokenEntity(PasswordResetToken passwordResetToken);
 
