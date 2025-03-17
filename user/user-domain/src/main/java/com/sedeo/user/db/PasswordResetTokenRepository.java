@@ -1,16 +1,16 @@
 package com.sedeo.user.db;
 
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.user.db.model.PasswordResetTokenEntity;
+import com.sedeo.user.model.PasswordResetToken;
 import io.vavr.control.Either;
 
 import java.util.UUID;
 
 public interface PasswordResetTokenRepository {
 
-    Either<GeneralError, PasswordResetTokenEntity> save(PasswordResetTokenEntity passwordResetToken);
+    Either<GeneralError, PasswordResetToken> save(PasswordResetToken passwordResetToken);
 
-    Either<GeneralError, PasswordResetTokenEntity> update(PasswordResetTokenEntity passwordResetToken);
+    Either<GeneralError, PasswordResetToken> update(PasswordResetToken passwordResetToken);
 
-    Either<GeneralError, PasswordResetTokenEntity> find(UUID token);
+    Either<GeneralError, PasswordResetToken> find(UUID token);
 }

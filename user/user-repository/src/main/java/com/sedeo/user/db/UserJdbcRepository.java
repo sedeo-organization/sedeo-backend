@@ -4,8 +4,8 @@ import com.sedeo.common.error.DatabaseError.DatabaseReadUnsuccessfulError;
 import com.sedeo.common.error.DatabaseError.DatabaseWriteUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.user.db.mapper.UserMapper;
-import com.sedeo.user.db.model.UserEntity;
 import com.sedeo.user.db.queries.UserQuery;
+import com.sedeo.user.model.User;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, UserEntity> findUser(UUID userId) {
+    public Either<GeneralError, User> findUser(UUID userId) {
         return Try.of(() -> singleResult(jdbcTemplate.query(UserQuery.USER_BY_ID, USER_MAPPER, userId)))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
@@ -45,7 +45,7 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, List<UserEntity>> findUsers(List<UUID> userIds) {
+    public Either<GeneralError, List<User>> findUsers(List<UUID> userIds) {
         SqlParameterSource parameters = new MapSqlParameterSource(Map.of(UserQuery.USER_IDS_PARAMETER, userIds));
         return Try.of(() -> namedParameterJdbcOperations.query(UserQuery.USERS_BY_IDS, parameters, USER_MAPPER))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
@@ -54,7 +54,7 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, UserEntity> findUser(String email) {
+    public Either<GeneralError, User> findUser(String email) {
         return Try.of(() -> singleResult(jdbcTemplate.query(USER_BY_EMAIL, USER_MAPPER, email)))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
@@ -62,18 +62,18 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, UserEntity> updateUser(UserEntity userEntity) {
+    public Either<GeneralError, User> updateUser(User user) {
         return Try.of(() -> jdbcTemplate.update(UPDATE_USER,
-                        userEntity.firstName(),
-                        userEntity.lastName(),
-                        userEntity.phoneNumber(),
-                        userEntity.email(),
-                        userEntity.password(),
-                        userEntity.accountBalance(),
-                        userEntity.userId()))
+                        user.firstName(),
+                        user.lastName(),
+                        user.phoneNumber(),
+                        user.email(),
+                        user.password(),
+                        user.accountBalance(),
+                        user.userId()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
-                .map(result -> userEntity)
+                .map(result -> user)
                 .mapLeft(DatabaseWriteUnsuccessfulError::new);
     }
 
@@ -83,12 +83,12 @@ public class UserJdbcRepository implements UserRepository {
     }
 
     @Override
-    public Either<GeneralError, UserEntity> createUser(UserEntity userEntity) {
-        return Try.of(() -> jdbcTemplate.update(SAVE_USER, userEntity.userId(), userEntity.firstName(), userEntity.lastName(),
-                        userEntity.phoneNumber(), userEntity.email(), userEntity.password(), userEntity.accountBalance()))
+    public Either<GeneralError, User> createUser(User user) {
+        return Try.of(() -> jdbcTemplate.update(SAVE_USER, user.userId(), user.firstName(), user.lastName(),
+                        user.phoneNumber(), user.email(), user.password(), user.accountBalance()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
-                .map(result -> userEntity)
+                .map(result -> user)
                 .mapLeft(DatabaseWriteUnsuccessfulError::new);
     }
 }

@@ -1,6 +1,6 @@
 package com.sedeo.user.db.mapper;
 
-import com.sedeo.user.db.model.PasswordResetTokenEntity;
+import com.sedeo.user.model.PasswordResetToken;
 import com.sedeo.user.model.TokenStatus;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class PasswordResetTokenMapper implements RowMapper<PasswordResetTokenEntity> {
+public class PasswordResetTokenMapper implements RowMapper<PasswordResetToken> {
 
     @Override
-    public PasswordResetTokenEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new PasswordResetTokenEntity(
+    public PasswordResetToken mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new PasswordResetToken(
                 (UUID) rs.getObject(Fields.TOKEN),
                 (UUID) rs.getObject(Fields.USER_ID),
                 rs.getString(Fields.FIRST_NAME),

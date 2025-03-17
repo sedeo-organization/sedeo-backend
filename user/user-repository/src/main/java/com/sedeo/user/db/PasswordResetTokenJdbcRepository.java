@@ -3,7 +3,7 @@ package com.sedeo.user.db;
 import com.sedeo.common.error.DatabaseError;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.user.db.mapper.PasswordResetTokenMapper;
-import com.sedeo.user.db.model.PasswordResetTokenEntity;
+import com.sedeo.user.model.PasswordResetToken;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class PasswordResetTokenJdbcRepository implements PasswordResetTokenRepos
     }
 
     @Override
-    public Either<GeneralError, PasswordResetTokenEntity> save(PasswordResetTokenEntity passwordResetToken) {
+    public Either<GeneralError, PasswordResetToken> save(PasswordResetToken passwordResetToken) {
         return Try.of(() -> jdbcTemplate.update(SAVE_PASSWORD_RESET_TOKEN,
                         passwordResetToken.token(),
                         passwordResetToken.userId(),
@@ -43,7 +43,7 @@ public class PasswordResetTokenJdbcRepository implements PasswordResetTokenRepos
     }
 
     @Override
-    public Either<GeneralError, PasswordResetTokenEntity> update(PasswordResetTokenEntity passwordResetToken) {
+    public Either<GeneralError, PasswordResetToken> update(PasswordResetToken passwordResetToken) {
         return Try.of(() -> jdbcTemplate.update(UPDATE_PASSWORD_RESET_TOKEN,
                         passwordResetToken.userId(),
                         passwordResetToken.firstName(),
@@ -59,7 +59,7 @@ public class PasswordResetTokenJdbcRepository implements PasswordResetTokenRepos
     }
 
     @Override
-    public Either<GeneralError, PasswordResetTokenEntity> find(UUID token) {
+    public Either<GeneralError, PasswordResetToken> find(UUID token) {
         return Try.of(() -> singleResult(jdbcTemplate.query(FIND_PASSWORD_RESET_TOKEN_BY_TOKEN_ID, PASSWORD_RESET_TOKEN_MAPPER, token)))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
