@@ -1,17 +1,16 @@
 package com.sedeo.user.db.mapper;
 
-import com.sedeo.user.db.model.UserEntity;
-
+import com.sedeo.user.model.User;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserMapper implements RowMapper<UserEntity> {
+public class UserMapper implements RowMapper<User> {
     @Override
-    public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new UserEntity(
+    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new User(
                 (UUID) rs.getObject(Fields.USER_ID),
                 rs.getString(Fields.FIRST_NAME),
                 rs.getString(Fields.LAST_NAME),

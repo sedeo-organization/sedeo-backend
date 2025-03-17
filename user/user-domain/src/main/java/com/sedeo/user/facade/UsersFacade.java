@@ -6,7 +6,6 @@ import com.sedeo.user.db.PasswordResetTokenRepository;
 import com.sedeo.user.db.UserRepository;
 import com.sedeo.user.model.PasswordResetToken;
 import com.sedeo.user.model.User;
-import com.sedeo.user.model.UserMapper;
 import com.sedeo.user.model.error.UserError.UserNotFoundError;
 import io.vavr.control.Either;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,8 +17,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class UsersFacade implements Users {
-
-    private static final UserMapper USER_MAPPER = UserMapper.INSTANCE;
 
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
@@ -35,21 +32,18 @@ public class UsersFacade implements Users {
     @Override
     public Either<GeneralError, User> fetchUser(UUID userId) {
         return userRepository.findUser(userId)
-                .filterOrElse(Objects::nonNull, error -> new UserNotFoundError())
-                .map(USER_MAPPER::userEntityToUser);
+                .filterOrElse(Objects::nonNull, error -> new UserNotFoundError());
     }
 
     @Override
     public Either<GeneralError, User> fetchUser(String email) {
         return userRepository.findUser(email)
-                .filterOrElse(Objects::nonNull, error -> new UserNotFoundError())
-                .map(USER_MAPPER::userEntityToUser);
+                .filterOrElse(Objects::nonNull, error -> new UserNotFoundError());
     }
 
     @Override
     public Either<GeneralError, List<User>> fetchUsers(List<UUID> userIds) {
-        return userRepository.findUsers(userIds)
-                .map(USER_MAPPER::userEntitiesToUsers);
+        return userRepository.findUsers(userIds);
     }
 
     @Override
@@ -58,7 +52,7 @@ public class UsersFacade implements Users {
         BigDecimal forcedPositiveAmount = positiveAmount.abs();
         return this.fetchUser(userId)
                 .map(user -> user.withAddedBalance(forcedPositiveAmount))
-                .flatMap(user -> userRepository.updateUser(USER_MAPPER.userToUserEntity(user)))
+                .flatMap(userRepository::updateUser)
                 .flatMap(result -> Either.right(null));
     }
 
@@ -68,7 +62,7 @@ public class UsersFacade implements Users {
         BigDecimal forcedPositiveAmount = positiveAmount.abs();
         return this.fetchUser(userId)
                 .map(user -> user.withReducedBalance(forcedPositiveAmount))
-                .flatMap(user -> userRepository.updateUser(USER_MAPPER.userToUserEntity(user)))
+                .flatMap(userRepository::updateUser)
                 .flatMap(result -> Either.right(null));
     }
 
@@ -79,7 +73,7 @@ public class UsersFacade implements Users {
 
     @Override
     public Either<GeneralError, Void> createUser(User user) {
-        return userRepository.createUser(USER_MAPPER.userToUserEntity(user))
+        return userRepository.createUser(user)
                 .flatMap(result -> publishUserCreatedSuccessfullyEvent(user));
     }
 
@@ -87,25 +81,18 @@ public class UsersFacade implements Users {
     public Either<GeneralError, PasswordResetToken> createPasswordResetToken(String email) {
         return this.fetchUser(email)
                 .map(user -> PasswordResetToken.randomUnusedToken(user.userId(), user.firstName(), user.lastName(), user.email()))
-                .map(USER_MAPPER::passwordResetTokenToPasswordResetTokenEntity)
-                .flatMap(passwordResetTokenRepository::save)
-                .map(USER_MAPPER::passwordResetTokenEntityToPasswordResetToken);
+                .flatMap(passwordResetTokenRepository::save);
     }
 
     @Override
     @Transactional
     public Either<GeneralError, User> changeUsersPassword(UUID token, String newPassword) {
         return passwordResetTokenRepository.find(token)
-                .map(USER_MAPPER::passwordResetTokenEntityToPasswordResetToken)
                 .flatMap(PasswordResetToken::useToken)
-                .map(USER_MAPPER::passwordResetTokenToPasswordResetTokenEntity)
                 .flatMap(passwordResetTokenRepository::update)
                 .flatMap(updatedToken -> userRepository.findUser(updatedToken.userId()))
-                .map(USER_MAPPER::userEntityToUser)
                 .map(user -> user.withNewPassword(newPassword))
-                .map(USER_MAPPER::userToUserEntity)
-                .flatMap(userRepository::updateUser)
-                .map(USER_MAPPER::userEntityToUser);
+                .flatMap(userRepository::updateUser);
     }
 
     private Either<GeneralError, Void> publishUserCreatedSuccessfullyEvent(User user) {
