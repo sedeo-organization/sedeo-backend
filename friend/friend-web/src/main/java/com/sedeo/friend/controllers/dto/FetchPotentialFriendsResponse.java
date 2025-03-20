@@ -9,5 +9,5 @@ public record FetchPotentialFriendsResponse(List<PotentialFriend> potentialFrien
         String firstName,
         String lastName,
         String phoneNumber
-    ) {}
+    ) { }
 }

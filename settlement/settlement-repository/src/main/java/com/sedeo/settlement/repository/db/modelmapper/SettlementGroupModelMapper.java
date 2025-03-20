@@ -8,9 +8,9 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface SettlementGroupMapper {
+public interface SettlementGroupModelMapper {
 
-    SettlementGroupMapper INSTANCE = Mappers.getMapper(SettlementGroupMapper.class);
+    SettlementGroupModelMapper INSTANCE = Mappers.getMapper(SettlementGroupModelMapper.class);
 
     SettlementGroup settlementGroupEntityToSettlementGroup(SettlementGroupEntity settlementGroupEntity);
 

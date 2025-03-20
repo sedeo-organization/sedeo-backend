@@ -13,7 +13,7 @@ public record Exchange(UUID exchangeId, UUID debtorUserId, UUID creditorUserId, 
     public Either<GeneralError, Exchange> withChangedStatus(ExchangeStatus newStatus) {
         return Option.of(this.status)
                 .filter(newStatus::isStatusChangePossible)
-                .map(status -> new Exchange(this.exchangeId, this.debtorUserId, this.creditorUserId, this.exchangeValue, newStatus))
+                .map(currentStatus -> new Exchange(this.exchangeId, this.debtorUserId, this.creditorUserId, this.exchangeValue, newStatus))
                 .toEither(new SettlementGroupError.ExchangeStatusChangeNotAllowed());
     }
 

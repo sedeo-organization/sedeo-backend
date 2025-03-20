@@ -30,7 +30,8 @@ public class DetailedFriendshipInvitationJdbcRepository implements DetailedFrien
 
     @Override
     public Either<GeneralError, List<DetailedFriendshipInvitation>> find(UUID invitedUserId, InvitationStatus invitationStatus) {
-        return Try.of(() -> jdbcTemplate.query(FIND_DETAILED_FRIENDSHIP_INVITATIONS, DETAILED_FRIENDSHIP_INVITATION_MAPPER, invitedUserId, invitationStatus.toString()))
+        return Try.of(() -> jdbcTemplate.query(FIND_DETAILED_FRIENDSHIP_INVITATIONS, DETAILED_FRIENDSHIP_INVITATION_MAPPER, invitedUserId,
+                        invitationStatus.toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);

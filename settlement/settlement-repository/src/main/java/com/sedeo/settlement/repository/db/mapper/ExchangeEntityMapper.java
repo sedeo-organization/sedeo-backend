@@ -22,7 +22,7 @@ public class ExchangeEntityMapper implements RowMapper<ExchangeEntity> {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String EXCHANGE_ID = "exchange_id";
         private static final String SETTLEMENT_ID = "settlement_id";
         private static final String GROUP_ID = "group_id";

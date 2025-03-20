@@ -11,7 +11,8 @@ public class ParticipantQuery {
     public static final String USER_IDS_SIZE_PARAMETER = "userIdsSize";
     public static final String GROUP_ID_PARAMETER = "groupId";
 
-    public static final String FIND_GROUP_IDS_FOR_PARTICIPANT_USER_ID_AND_SETTLEMENT_STATUS = "SELECT group_id FROM %s WHERE user_id = :%s AND settlement_status IN (:%s)"
+    public static final String FIND_GROUP_IDS_FOR_PARTICIPANT_USER_ID_AND_SETTLEMENT_STATUS = ("SELECT group_id FROM %s"
+            + " WHERE user_id = :%s AND settlement_status IN (:%s)")
             .formatted(PARTICIPANT_TABLE, USER_ID_PARAMETER, STATUSES_PARAMETER);
 
     public static final String SAVE_PARTICIPANT = "INSERT INTO %s VALUES(?, ?, ?, ?, ?)"

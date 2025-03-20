@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    public static final int ENCODER_STRENGTH = 14;
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
 
@@ -51,7 +52,7 @@ public class SecurityConfiguration {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(14);
+        return new BCryptPasswordEncoder(ENCODER_STRENGTH);
     }
 
     @Bean

@@ -29,7 +29,7 @@ public class DetailedFriendshipInvitationMapper implements RowMapper<DetailedFri
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String FRIENDSHIP_INVITATION_ID = "friendship_invitation_id";
         private static final String INVITATION_STATUS = "invitation_status";
 

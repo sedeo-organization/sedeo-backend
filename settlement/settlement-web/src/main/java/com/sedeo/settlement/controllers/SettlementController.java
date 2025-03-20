@@ -42,7 +42,8 @@ public class SettlementController {
         UUID userId = UUID.fromString(principal.getName());
         return settlementGroups.fetchSettlementGroups(userId, settlementStatuses).fold(
                 ResponseMapper::mapError,
-                settlementGroups -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.settlementGroupsToFetchSettlementGroupsResponse(settlementGroups))
+                foundSettlementGroups -> ResponseEntity.ok()
+                        .body(SETTLEMENT_MAPPER.settlementGroupsToFetchSettlementGroupsResponse(foundSettlementGroups))
         );
     }
 
@@ -57,13 +58,13 @@ public class SettlementController {
                 createSettlementGroupRequest.participantIds()
         ).fold(
                 ResponseMapper::mapError,
-                settlementGroups -> ResponseEntity.status(CREATED).build()
+                foundSettlementGroups -> ResponseEntity.status(CREATED).build()
         );
     }
 
     @PostMapping("/settlement-groups/{groupId}/settlements")
-    public ResponseEntity<?> createSingleSettlement(@RequestBody @Valid CreateSingleSettlementRequest createSingleSettlementRequest, @PathVariable("groupId") UUID groupId,
-                                                    Principal principal) {
+    public ResponseEntity<?> createSingleSettlement(@RequestBody @Valid CreateSingleSettlementRequest createSingleSettlementRequest,
+                                                    @PathVariable("groupId") UUID groupId, Principal principal) {
         UUID userId = UUID.fromString(principal.getName());
         return settlements.createSettlement(SETTLEMENT_MAPPER.createSettlementRequestToSettlement(createSingleSettlementRequest), userId, groupId)
                 .fold(
@@ -77,7 +78,7 @@ public class SettlementController {
         UUID userId = UUID.fromString(principal.getName());
         return settlements.fetchSettlements(groupId, userId).fold(
                 ResponseMapper::mapError,
-                settlements -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.simpleSettlementsToFetchSettlementsResponse(settlements))
+                foundSettlements -> ResponseEntity.ok().body(SETTLEMENT_MAPPER.simpleSettlementsToFetchSettlementsResponse(foundSettlements))
         );
     }
 
@@ -111,7 +112,8 @@ public class SettlementController {
     }
 
     @GetMapping("/settlement-groups/{groupId}/summary")
-    public ResponseEntity<?> fetchSettlementGroupSummary(@RequestParam(name = "status", required = false) String status, @PathVariable("groupId") UUID groupId, Principal principal) {
+    public ResponseEntity<?> fetchSettlementGroupSummary(@RequestParam(name = "status", required = false) String status,
+                                                         @PathVariable("groupId") UUID groupId, Principal principal) {
         List<ExchangeStatus> exchangeStatuses = extractExchangeStatuses(status);
 
         UUID userId = UUID.fromString(principal.getName());

@@ -35,11 +35,14 @@ public interface FriendControllerMapper {
     @Mapping(source = "invitingUser.firstName", target = "firstName")
     @Mapping(source = "invitingUser.lastName", target = "lastName")
     @Mapping(source = "invitingUser.phoneNumber", target = "phoneNumber")
-    FetchFriendshipInvitationsResponse.Invitation detailedFriendshipInvitationToFetchFriendshipInvitationResponseInvitation(DetailedFriendshipInvitation invitation);
+    FetchFriendshipInvitationsResponse.Invitation detailedFriendshipInvitationToFetchFriendshipInvitationResponseInvitation(
+            DetailedFriendshipInvitation invitation);
 
-    List<FetchFriendshipInvitationsResponse.Invitation> detailedFriendshipInvitationsToFetchFriendshipInvitationResponseInvitations(List<DetailedFriendshipInvitation> invitations);
+    List<FetchFriendshipInvitationsResponse.Invitation> detailedFriendshipInvitationsToFetchFriendshipInvitationResponseInvitations(
+            List<DetailedFriendshipInvitation> invitations);
 
-    default FetchFriendshipInvitationsResponse detailedFriendshipInvitationsToFetchFriendshipInvitationResponse(List<DetailedFriendshipInvitation> invitations) {
+    default FetchFriendshipInvitationsResponse detailedFriendshipInvitationsToFetchFriendshipInvitationResponse(
+            List<DetailedFriendshipInvitation> invitations) {
         return new FetchFriendshipInvitationsResponse(detailedFriendshipInvitationsToFetchFriendshipInvitationResponseInvitations(invitations));
     }
 }

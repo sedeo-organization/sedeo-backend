@@ -20,7 +20,8 @@ public class ExchangesFacade implements Exchanges {
     private final ParticipantRepository participantRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ExchangesFacade(ExchangeRepository exchangeRepository, ParticipantRepository participantRepository, ApplicationEventPublisher applicationEventPublisher) {
+    public ExchangesFacade(ExchangeRepository exchangeRepository, ParticipantRepository participantRepository,
+                           ApplicationEventPublisher applicationEventPublisher) {
         this.exchangeRepository = exchangeRepository;
         this.participantRepository = participantRepository;
         this.applicationEventPublisher = applicationEventPublisher;
