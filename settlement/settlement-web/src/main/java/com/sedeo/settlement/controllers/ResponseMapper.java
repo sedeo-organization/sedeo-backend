@@ -2,7 +2,7 @@ package com.sedeo.settlement.controllers;
 
 import com.sedeo.common.error.ErrorResponse;
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.settlement.model.error.SettlementGroupError;
+import com.sedeo.domain.settlement.model.error.SettlementGroupError;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseMapper {

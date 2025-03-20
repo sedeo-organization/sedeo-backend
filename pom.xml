@@ -57,10 +57,12 @@
 		<dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
 		<cucumber-picocontainer.version>7.21.1</cucumber-picocontainer.version>
 		<cucumber-java.version>7.14.0</cucumber-java.version>
+		<surefire-junit4.version>3.1.2</surefire-junit4.version>
+		<archunit-junit4.version>1.2.1</archunit-junit4.version>
 
 		<dockerfile.tag>${project.version}</dockerfile.tag>
 		<repository.dir>sedeo</repository.dir>
-    </properties>
+	</properties>
 
 	<dependencies>
 		<dependency>

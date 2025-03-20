@@ -4,8 +4,8 @@ import com.sedeo.authentication.model.AuthenticateUserServiceRequest;
 import com.sedeo.authentication.model.RegisterUserServiceRequest;
 import com.sedeo.authentication.model.error.UserAuthenticationError;
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.user.facade.Users;
-import com.sedeo.user.model.User;
+import com.sedeo.domain.user.facade.Users;
+import com.sedeo.domain.user.model.User;
 import io.vavr.control.Either;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

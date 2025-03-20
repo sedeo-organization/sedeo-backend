@@ -1,9 +1,9 @@
 package friends
 
-import com.sedeo.friend.db.FriendRepository
-import com.sedeo.friend.facade.FriendsFacade
-import com.sedeo.friend.model.Friend
-import com.sedeo.friend.model.error.FriendError
+import com.sedeo.domain.friend.db.FriendRepository
+import com.sedeo.domain.friend.facade.FriendsFacade
+import com.sedeo.domain.friend.model.Friend
+import com.sedeo.domain.friend.model.error.FriendError
 import io.vavr.control.Either
 import spock.lang.Specification
 

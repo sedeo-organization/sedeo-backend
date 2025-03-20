@@ -1,13 +1,13 @@
 package user
 
-import com.sedeo.user.db.PasswordResetTokenRepository
-import com.sedeo.user.db.UserRepository
-import com.sedeo.user.facade.UsersFacade
-import com.sedeo.user.model.PasswordResetToken
-import com.sedeo.user.model.TokenStatus
-import com.sedeo.user.model.User
-import com.sedeo.user.model.error.PasswordResetTokenError
-import com.sedeo.user.model.error.UserError
+import com.sedeo.domain.user.db.PasswordResetTokenRepository
+import com.sedeo.domain.user.db.UserRepository
+import com.sedeo.domain.user.facade.UsersFacade
+import com.sedeo.domain.user.model.PasswordResetToken
+import com.sedeo.domain.user.model.TokenStatus
+import com.sedeo.domain.user.model.User
+import com.sedeo.domain.user.model.error.PasswordResetTokenError
+import com.sedeo.domain.user.model.error.UserError
 import io.vavr.control.Either
 import org.springframework.context.ApplicationEventPublisher
 import spock.lang.Specification

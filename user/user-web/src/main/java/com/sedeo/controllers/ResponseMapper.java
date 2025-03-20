@@ -2,7 +2,7 @@ package com.sedeo.controllers;
 
 import com.sedeo.common.error.ErrorResponse;
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.user.model.error.UserError.UserNotFoundError;
+import com.sedeo.domain.user.model.error.UserError.UserNotFoundError;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseMapper {
