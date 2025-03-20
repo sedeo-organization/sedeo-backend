@@ -18,5 +18,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Run unit tests
+        run: ./mvnw -B -Ddockerfile.skip=true test --file pom.xml
+      - name: Run build docker
+        run: ./mvnw package -Dskip.ut=true -Dmaven.main.skip
+      - name: Run cucumber tests
+        run: ./mvnw -B -Ddockerfile.skip=true -Dskip.ut=true verify --file pom.xml
+        env:
+          AZURE_CONNECTION_STRING: ${{ secrets.AZURE_CONNECTION_STRING }}
+          FRONTEND_BASE_URL: ${{ vars.FRONTEND_BASE_URL }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          MAIL_SENDER_ADDRESS: ${{ secrets.MAIL_SENDER_ADDRESS }}

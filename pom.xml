@@ -19,7 +19,8 @@
 		<module>authentication</module>
         <module>cloud</module>
 		<module>friend</module>
-	</modules>
+        <module>tests</module>
+    </modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -46,7 +47,20 @@
 		<groovy-all.version>4.0.26</groovy-all.version>
 		<byte-buddy.version>1.15.3</byte-buddy.version>
 		<gmavenplus-plugin.version>4.1.1</gmavenplus-plugin.version>
-	</properties>
+        <junit-vintage-engine.version>5.9.3</junit-vintage-engine.version>
+		<maven-cucumber-reporting.version>5.7.7</maven-cucumber-reporting.version>
+		<rest-assured.version>5.3.2</rest-assured.version>
+		<testcontainers-postgresql.version>1.19.3</testcontainers-postgresql.version>
+		<cucumber-junit.version>7.14.0</cucumber-junit.version>
+		<testcontainers.version>1.19.3</testcontainers.version>
+		<cucumber-bom.version>7.21.1</cucumber-bom.version>
+		<dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
+		<cucumber-picocontainer.version>7.21.1</cucumber-picocontainer.version>
+		<cucumber-java.version>7.14.0</cucumber-java.version>
+
+		<dockerfile.tag>${project.version}</dockerfile.tag>
+		<repository.dir>sedeo</repository.dir>
+    </properties>
 
 	<dependencies>
 		<dependency>
@@ -88,6 +102,28 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${dockerfile-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${repository.dir}/${project.artifactId}</repository>
+					<tag>${dockerfile.tag}</tag>
+					<buildArgs>
+						<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
 				<version>${gmavenplus-plugin.version}</version>
@@ -111,6 +147,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
+					<skipTests>${skip.ut}</skipTests>
 					<includes>
 						<include>**/*Specification.java</include>
 						<include>**/*Spec.java</include>
