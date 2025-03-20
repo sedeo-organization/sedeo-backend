@@ -24,7 +24,8 @@ public interface SettlementMapper {
     List<FetchSettlementGroupsResponse.SettlementGroup> settlementGroupsToFetchSettlementGroupResponseSettlementGroups(List<SettlementGroup> settlementGroups);
 
     default FetchSettlementGroupsResponse settlementGroupsToFetchSettlementGroupsResponse(List<SettlementGroup> settlementGroups) {
-        List<FetchSettlementGroupsResponse.SettlementGroup> settlementGroupList = settlementGroupsToFetchSettlementGroupResponseSettlementGroups(settlementGroups);
+        List<FetchSettlementGroupsResponse.SettlementGroup> settlementGroupList =
+                settlementGroupsToFetchSettlementGroupResponseSettlementGroups(settlementGroups);
         return new FetchSettlementGroupsResponse(settlementGroupList);
     }
 
@@ -50,9 +51,11 @@ public interface SettlementMapper {
     @Mapping(source = "debtor.firstName", target = "debtorFirstName")
     @Mapping(source = "debtor.lastName", target = "debtorLastName")
     @Mapping(source = "debtor.userId", target = "debtorId")
-    FetchSettlementDetailsResponse.SettlementExchange exchangeWithParticipantsToFetchSettlementDetailsResponseSettlementExchange(ExchangeWithParticipants exchangeWithParticipants);
+    FetchSettlementDetailsResponse.SettlementExchange exchangeWithParticipantsToFetchSettlementDetailsResponseSettlementExchange(
+            ExchangeWithParticipants exchangeWithParticipants);
 
-    List<FetchSettlementDetailsResponse.SettlementExchange> exchangeWithParticipantListToFetchSettlementDetailsResponseSettlementExchangeList(List<ExchangeWithParticipants> exchangesWithParticipants);
+    List<FetchSettlementDetailsResponse.SettlementExchange> exchangeWithParticipantListToFetchSettlementDetailsResponseSettlementExchangeList(
+            List<ExchangeWithParticipants> exchangesWithParticipants);
 
     @Mapping(source = "exchanges", target = "settlementExchanges")
     FetchSettlementDetailsResponse detailedSettlementToFetchSettlementDetailsResponse(DetailedSettlement detailedSettlement);
@@ -62,16 +65,20 @@ public interface SettlementMapper {
     List<FetchParticipantsResponse.Participant> participantListToFetchParticipantsResponseParticipantList(List<Participant> participants);
 
     default FetchParticipantsResponse participantsToFetchParticipantsResponse(List<Participant> participants) {
-        List<FetchParticipantsResponse.Participant> fetchParticipantsResponseParticipantList = participantListToFetchParticipantsResponseParticipantList(participants);
+        List<FetchParticipantsResponse.Participant> fetchParticipantsResponseParticipantList =
+                participantListToFetchParticipantsResponseParticipantList(participants);
         return new FetchParticipantsResponse(fetchParticipantsResponseParticipantList);
     }
 
-    FetchSettlementGroupSummaryResponse.SummaryExchange summaryExchangeToFetchSettlementGroupSummaryResponseSummaryExchange(SummaryExchange summaryExchange);
+    FetchSettlementGroupSummaryResponse.SummaryExchange summaryExchangeToFetchSettlementGroupSummaryResponseSummaryExchange(
+            SummaryExchange summaryExchange);
 
-    List<FetchSettlementGroupSummaryResponse.SummaryExchange> summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(List<SummaryExchange> summaryExchanges);
+    List<FetchSettlementGroupSummaryResponse.SummaryExchange> summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(
+            List<SummaryExchange> summaryExchanges);
 
     default FetchSettlementGroupSummaryResponse summaryExchangesToFetchSettlementGroupSummaryResponse(List<SummaryExchange> summaryExchanges) {
-        List<FetchSettlementGroupSummaryResponse.SummaryExchange> fetchSettlementGroupSummaryResponseSummaryExchanges = summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(summaryExchanges);
+        List<FetchSettlementGroupSummaryResponse.SummaryExchange> fetchSettlementGroupSummaryResponseSummaryExchanges =
+                summaryExchangeListToFetchSettlementGroupSummaryResponseSummaryExchangeList(summaryExchanges);
         return new FetchSettlementGroupSummaryResponse(fetchSettlementGroupSummaryResponseSummaryExchanges);
     }
 }

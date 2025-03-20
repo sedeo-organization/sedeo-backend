@@ -5,6 +5,8 @@ import com.sedeo.common.error.DatabaseError.DatabaseReadUnsuccessfulError;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.domain.settlement.db.SettlementGroupRepository;
 import com.sedeo.domain.settlement.model.SettlementGroup;
+import com.sedeo.settlement.repository.db.mapper.SettlementGroupMapper;
+import com.sedeo.settlement.repository.db.modelmapper.SettlementGroupModelMapper;
 import com.sedeo.settlement.repository.db.queries.SettlementGroupQuery;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -27,8 +29,8 @@ public class SettlementGroupJdbcRepository implements SettlementGroupRepository 
     private final JdbcTemplate jdbcTemplate;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettlementGroupJdbcRepository.class);
-    private static final com.sedeo.settlement.repository.db.mapper.SettlementGroupMapper SETTLEMENT_GROUP_MAPPER = new com.sedeo.settlement.repository.db.mapper.SettlementGroupMapper();
-    private static final com.sedeo.settlement.repository.db.modelmapper.SettlementGroupMapper SETTLEMENT_MAPPER = com.sedeo.settlement.repository.db.modelmapper.SettlementGroupMapper.INSTANCE;
+    private static final SettlementGroupMapper SETTLEMENT_GROUP_MAPPER = new SettlementGroupMapper();
+    private static final SettlementGroupModelMapper SETTLEMENT_MAPPER = SettlementGroupModelMapper.INSTANCE;
 
     public SettlementGroupJdbcRepository(NamedParameterJdbcOperations namedParameterJdbcOperations, JdbcTemplate jdbcTemplate) {
         this.namedParameterJdbcOperations = namedParameterJdbcOperations;

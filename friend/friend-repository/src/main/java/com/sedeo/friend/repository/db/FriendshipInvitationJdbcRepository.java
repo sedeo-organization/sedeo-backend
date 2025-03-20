@@ -38,7 +38,8 @@ public class FriendshipInvitationJdbcRepository implements FriendshipInvitationR
                         friendshipInvitation.invitedUserId(),
                         friendshipInvitation.invitationStatus().toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
-                .onSuccess(success -> LOGGER.info("Friend invitation created for inviting user {} and recipient {}", friendshipInvitation.invitingUserId(), friendshipInvitation.invitedUserId()))
+                .onSuccess(success -> LOGGER.info("Friend invitation created for inviting user {} and recipient {}",
+                        friendshipInvitation.invitingUserId(), friendshipInvitation.invitedUserId()))
                 .toEither()
                 .map(result -> friendshipInvitation)
                 .mapLeft(DatabaseError.DatabaseWriteUnsuccessfulError::new);
@@ -68,8 +69,10 @@ public class FriendshipInvitationJdbcRepository implements FriendshipInvitationR
     }
 
     @Override
-    public Either<GeneralError, List<FriendshipInvitation>> findUsersIncomingFriendshipInvitationsByUserId(UUID invitedUserId, InvitationStatus invitationStatus) {
-        return Try.of(() -> jdbcTemplate.query(INCOMING_FRIENDSHIP_INVITATIONS_BY_USER_ID, FRIENDSHIP_INVITATION_MAPPER, invitedUserId, invitationStatus.toString()))
+    public Either<GeneralError, List<FriendshipInvitation>> findUsersIncomingFriendshipInvitationsByUserId(UUID invitedUserId,
+                                                                                                           InvitationStatus invitationStatus) {
+        return Try.of(() -> jdbcTemplate.query(INCOMING_FRIENDSHIP_INVITATIONS_BY_USER_ID, FRIENDSHIP_INVITATION_MAPPER,
+                        invitedUserId, invitationStatus.toString()))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(DatabaseError.DatabaseReadUnsuccessfulError::new);

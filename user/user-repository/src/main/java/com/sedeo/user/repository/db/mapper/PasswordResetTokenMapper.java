@@ -23,7 +23,7 @@ public class PasswordResetTokenMapper implements RowMapper<PasswordResetToken> {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String TOKEN = "token";
         private static final String USER_ID = "user_id";
         private static final String FIRST_NAME = "first_name";

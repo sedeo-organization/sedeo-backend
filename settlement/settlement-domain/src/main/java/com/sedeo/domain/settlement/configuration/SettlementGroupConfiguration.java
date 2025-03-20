@@ -37,7 +37,8 @@ public class SettlementGroupConfiguration {
     }
 
     @Bean
-    Exchanges exchanges(ExchangeRepository exchangeRepository, ParticipantRepository participantRepository, ApplicationEventPublisher applicationEventPublisher) {
+    Exchanges exchanges(ExchangeRepository exchangeRepository, ParticipantRepository participantRepository,
+                        ApplicationEventPublisher applicationEventPublisher) {
         return new ExchangesFacade(exchangeRepository, participantRepository, applicationEventPublisher);
     }
 }

@@ -17,7 +17,7 @@ public class SettlementGroupMapper implements RowMapper<SettlementGroupEntity> {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String GROUP_ID = "group_id";
         private static final String TITLE = "title";
     }

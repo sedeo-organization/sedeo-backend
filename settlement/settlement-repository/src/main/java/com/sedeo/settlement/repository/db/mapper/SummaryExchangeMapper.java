@@ -23,7 +23,7 @@ public class SummaryExchangeMapper implements RowMapper<SummaryExchange> {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String GROUP_ID = "group_id";
         private static final String DEBTOR_USER_ID = "debtor_user_id";
         private static final String DEBTOR_FIRST_NAME = "debtor_first_name";

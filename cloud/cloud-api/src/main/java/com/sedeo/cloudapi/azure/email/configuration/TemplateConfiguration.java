@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class TemplateConfiguration {
 
     @Bean
-    ResetPasswordMessageTemplate ResetPasswordMessageTemplate(@Value("${frontend.base.url}") String frontendBaseUrl) {
+    ResetPasswordMessageTemplate resetPasswordMessageTemplate(@Value("${frontend.base.url}") String frontendBaseUrl) {
         return new ResetPasswordMessageTemplate(frontendBaseUrl);
     }
 }

@@ -20,7 +20,7 @@ public class ParticipantEntityMapper implements RowMapper<ParticipantEntity>  {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String GROUP_ID = "group_id";
         private static final String USER_ID = "user_id";
         private static final String FIRST_NAME = "first_name";

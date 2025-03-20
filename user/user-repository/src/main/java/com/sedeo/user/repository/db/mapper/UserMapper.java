@@ -21,7 +21,7 @@ public class UserMapper implements RowMapper<User> {
         );
     }
 
-    private static class Fields {
+    private static final class Fields {
         private static final String USER_ID = "user_id";
         private static final String FIRST_NAME = "first_name";
         private static final String LAST_NAME = "last_name";

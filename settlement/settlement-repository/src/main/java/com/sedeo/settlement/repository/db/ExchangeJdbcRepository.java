@@ -91,8 +91,10 @@ public class ExchangeJdbcRepository implements ExchangeRepository {
     }
 
     @Override
-    public Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipantsWithinGroupByStatuses(UUID groupId, UUID firstParticipantId,
-                                                                                                        UUID secondParticipantId, List<ExchangeStatus> statuses) {
+    public Either<GeneralError, List<Exchange>> findExchangesInvolvingParticipantsWithinGroupByStatuses(UUID groupId,
+                                                                                                        UUID firstParticipantId,
+                                                                                                        UUID secondParticipantId,
+                                                                                                        List<ExchangeStatus> statuses) {
         List<String> exchangeStatuses = statuses.stream().map(Enum::toString).toList();
         SqlParameterSource parameters = new MapSqlParameterSource(Map.of(
                 GROUP_ID_PARAMETER, groupId,

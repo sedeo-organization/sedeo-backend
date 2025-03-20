@@ -26,7 +26,8 @@ public class UserAuthenticationBaseService implements UserAuthenticationService 
     @Override
     public Either<GeneralError, String> authenticate(AuthenticateUserServiceRequest authenticateUserServiceRequest) {
         return users.fetchUser(authenticateUserServiceRequest.email())
-                .filterOrElse(user -> passwordEncoder.matches(authenticateUserServiceRequest.plainPassword(), user.password()), error -> new UserAuthenticationError.EmailOrPasswordIncorrectError())
+                .filterOrElse(user -> passwordEncoder.matches(authenticateUserServiceRequest.plainPassword(),
+                        user.password()), error -> new UserAuthenticationError.EmailOrPasswordIncorrectError())
                 .flatMap(user -> jwtService.generate(user.userId().toString()));
     }
 

@@ -4,10 +4,10 @@ import com.sedeo.common.error.DatabaseError;
 import com.sedeo.common.error.GeneralError;
 import com.sedeo.domain.settlement.db.ExchangeRepository;
 import com.sedeo.domain.settlement.db.SettlementRepository;
-import com.sedeo.settlement.repository.db.mapper.SettlementEntityMapper;
-import com.sedeo.settlement.repository.db.modelmapper.SettlementMapper;
 import com.sedeo.domain.settlement.model.Settlement;
 import com.sedeo.domain.settlement.model.view.SimpleSettlement;
+import com.sedeo.settlement.repository.db.mapper.SettlementEntityMapper;
+import com.sedeo.settlement.repository.db.modelmapper.SettlementMapper;
 import com.sedeo.settlement.repository.db.queries.SettlementQuery;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.lang.Boolean.TRUE;
-import static org.springframework.dao.support.DataAccessUtils.singleResult;
 
 public class SettlementJdbcRepository implements SettlementRepository {
 
@@ -38,7 +37,8 @@ public class SettlementJdbcRepository implements SettlementRepository {
 
     @Override
     public Either<GeneralError, Settlement> save(Settlement settlement, UUID groupId) {
-        return Try.of(() -> jdbcTemplate.update(SettlementQuery.SAVE_SETTLEMENT, settlement.settlementId(), groupId, settlement.title(), settlement.totalValue()))
+        return Try.of(() -> jdbcTemplate.update(SettlementQuery.SAVE_SETTLEMENT, settlement.settlementId(), groupId,
+                        settlement.title(), settlement.totalValue()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
                 .map(result -> exchangeRepository.save(settlement.exchanges(), settlement.settlementId(), groupId))
@@ -57,7 +57,8 @@ public class SettlementJdbcRepository implements SettlementRepository {
 
     @Override
     public Either<GeneralError, Settlement> findSettlement(UUID settlementId) {
-        return Try.of(() -> DataAccessUtils.singleResult(jdbcTemplate.query(SettlementQuery.SETTLEMENT_BY_SETTLEMENT_ID, SETTLEMENT_ENTITY_MAPPER, settlementId)))
+        return Try.of(() -> DataAccessUtils.singleResult(jdbcTemplate.query(SettlementQuery.SETTLEMENT_BY_SETTLEMENT_ID,
+                        SETTLEMENT_ENTITY_MAPPER, settlementId)))
                 .onFailure(exception -> LOGGER.error("Database read error occurred", exception))
                 .toEither()
                 .mapLeft(throwable -> (GeneralError) new DatabaseError.DatabaseReadUnsuccessfulError(throwable))
@@ -72,7 +73,8 @@ public class SettlementJdbcRepository implements SettlementRepository {
 
     @Override
     public Either<GeneralError, Settlement> update(Settlement settlement, UUID groupId) {
-        return Try.of(() -> jdbcTemplate.update(SettlementQuery.UPDATE_SETTLEMENT, groupId, settlement.title(), settlement.totalValue(), settlement.settlementId()))
+        return Try.of(() -> jdbcTemplate.update(SettlementQuery.UPDATE_SETTLEMENT, groupId, settlement.title(), settlement.totalValue(),
+                        settlement.settlementId()))
                 .onFailure(exception -> LOGGER.error("Database write error occurred", exception))
                 .toEither()
                 .mapLeft(exception -> (GeneralError) new DatabaseError.DatabaseWriteUnsuccessfulError(exception))

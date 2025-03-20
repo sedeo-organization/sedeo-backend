@@ -46,7 +46,8 @@ public class FriendshipInvitationsFacade implements FriendshipInvitations {
     @Override
     @Transactional
     public Either<GeneralError, FriendshipInvitation> changeFriendshipInvitationStatus(UUID invitationId, UUID invitedUserId, InvitationStatus status) {
-        Predicate<FriendshipInvitation> statusChangingUserIsTheOneBeingInvited = friendshipInvitation -> friendshipInvitation.invitedUserId().equals(invitedUserId);
+        Predicate<FriendshipInvitation> statusChangingUserIsTheOneBeingInvited = friendshipInvitation ->
+                friendshipInvitation.invitedUserId().equals(invitedUserId);
         Either<GeneralError, FriendshipInvitation> maybeFriendshipInvitation = friendshipInvitationRepository.findById(invitationId, InvitationStatus.PENDING)
                 .filterOrElse(Objects::nonNull, error -> new FriendError.FriendshipInvitationNotFound())
                 .filterOrElse(statusChangingUserIsTheOneBeingInvited, error -> new FriendError.FriendInvitationStatusChangeNotAllowed())
@@ -54,7 +55,8 @@ public class FriendshipInvitationsFacade implements FriendshipInvitations {
                 .flatMap(friendshipInvitationRepository::update);
 
         if (InvitationStatus.ACCEPTED.equals(status)) {
-            maybeFriendshipInvitation.map(friendshipInvitation -> friendships.createFriendship(friendshipInvitation.invitedUserId(), friendshipInvitation.invitingUserId())
+            maybeFriendshipInvitation.map(friendshipInvitation -> friendships.createFriendship(friendshipInvitation.invitedUserId(),
+                            friendshipInvitation.invitingUserId())
                     .map(friendship -> friendshipInvitation));
         }
 

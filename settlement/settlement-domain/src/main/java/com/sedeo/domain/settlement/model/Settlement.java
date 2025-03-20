@@ -90,7 +90,7 @@ public record Settlement(UUID settlementId, String title, BigDecimal totalValue,
         return Either.right(lookedForExchange.get());
     }
 
-    public Settlement withExchanges(List<Exchange> exchanges) {
-        return new Settlement(this.settlementId, this.title, this.totalValue, exchanges);
+    public Settlement withExchanges(List<Exchange> newExchanges) {
+        return new Settlement(this.settlementId, this.title, this.totalValue, newExchanges);
     }
 }

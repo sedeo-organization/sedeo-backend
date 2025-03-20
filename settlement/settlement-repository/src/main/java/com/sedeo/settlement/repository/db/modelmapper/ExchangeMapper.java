@@ -12,7 +12,7 @@ public interface ExchangeMapper {
 
     ExchangeMapper INSTANCE = Mappers.getMapper(ExchangeMapper.class);
 
-    Exchange exchangeEntityToExchange(ExchangeEntity ExchangeEntity);
+    Exchange exchangeEntityToExchange(ExchangeEntity exchangeEntity);
 
     List<Exchange> exchangeEntityListToExchangeList(List<ExchangeEntity> exchangeEntities);
 }

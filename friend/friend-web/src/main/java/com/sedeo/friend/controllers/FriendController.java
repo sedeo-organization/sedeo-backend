@@ -44,7 +44,7 @@ public class FriendController {
                 .flatMap(friends::fetchFriends)
                 .fold(
                         ResponseMapper::mapError,
-                        friends -> ResponseEntity.ok(FRIEND_CONTROLLER_MAPPER.friendsToFetchFriendsResponse(friends))
+                        foundFriends -> ResponseEntity.ok(FRIEND_CONTROLLER_MAPPER.friendsToFetchFriendsResponse(foundFriends))
                 );
     }
 
@@ -54,7 +54,8 @@ public class FriendController {
 
         return detailedFriendshipInvitations.fetchDetailedFriendshipInvitations(userId, InvitationStatus.PENDING).fold(
                 ResponseMapper::mapError,
-                friendshipInvitations -> ResponseEntity.ok(FRIEND_CONTROLLER_MAPPER.detailedFriendshipInvitationsToFetchFriendshipInvitationResponse(friendshipInvitations))
+                foundFriendshipInvitations -> ResponseEntity.ok(FRIEND_CONTROLLER_MAPPER
+                        .detailedFriendshipInvitationsToFetchFriendshipInvitationResponse(foundFriendshipInvitations))
         );
     }
 

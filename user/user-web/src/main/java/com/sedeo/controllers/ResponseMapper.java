@@ -14,6 +14,6 @@ public class ResponseMapper {
             return ErrorResponse.notFound(domainError.message());
         } else {
             return ErrorResponse.databaseError(UNEXPECTED_ERROR_OCCURRED);
-        }  
+        }
     }
 }

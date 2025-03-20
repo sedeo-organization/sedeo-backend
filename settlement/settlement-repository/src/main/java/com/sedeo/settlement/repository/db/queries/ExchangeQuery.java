@@ -15,8 +15,8 @@ public record ExchangeQuery() {
     public static final String EXCHANGES_BY_SETTLEMENT_ID = "SELECT * FROM %s WHERE settlement_id = ?"
             .formatted(EXCHANGE_TABLE);
 
-    public static final String UPDATE_EXCHANGE = ("UPDATE %s SET settlement_id = ?, group_id = ?, debtor_user_id = ?, creditor_user_id = ?," +
-            " exchange_value = ?, status = ? WHERE exchange_id = ?")
+    public static final String UPDATE_EXCHANGE = ("UPDATE %s SET settlement_id = ?, group_id = ?, debtor_user_id = ?, creditor_user_id = ?,"
+            + " exchange_value = ?, status = ? WHERE exchange_id = ?")
             .formatted(EXCHANGE_TABLE);
 
     public static final String UPDATE_EXCHANGE_STATUS = ("UPDATE %s SET status = ? WHERE exchange_id = ?")
@@ -25,9 +25,11 @@ public record ExchangeQuery() {
     public static final String EXCHANGES_BY_GROUP_ID_AND_USER_ID = ("SELECT * FROM %s WHERE group_id = ? AND (creditor_user_id = ? OR debtor_user_id = ?)")
             .formatted(EXCHANGE_TABLE);
 
-    public static final String EXCHANGES_BY_GROUP_ID_AND_USER_IDS = ("SELECT * FROM %s WHERE group_id = :%s AND (creditor_user_id = :%s AND debtor_user_id = :%s) OR (creditor_user_id = :%s AND debtor_user_id = :%s) " +
-            "AND status IN (:%s)")
-            .formatted(EXCHANGE_TABLE, GROUP_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, DEBTOR_USER_ID_PARAMETER, DEBTOR_USER_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, STATUSES_PARAMETER);
+    public static final String EXCHANGES_BY_GROUP_ID_AND_USER_IDS = ("SELECT * FROM %s WHERE group_id = :%s AND"
+            + " (creditor_user_id = :%s AND debtor_user_id = :%s) OR (creditor_user_id = :%s AND debtor_user_id = :%s) "
+            + "AND status IN (:%s)")
+            .formatted(EXCHANGE_TABLE, GROUP_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, DEBTOR_USER_ID_PARAMETER,
+                    DEBTOR_USER_ID_PARAMETER, CREDITOR_USER_ID_PARAMETER, STATUSES_PARAMETER);
 
     public static final String AGGREGATE_EXCHANGES_SUMMARY = ("""
                 WITH PairwiseSum AS (

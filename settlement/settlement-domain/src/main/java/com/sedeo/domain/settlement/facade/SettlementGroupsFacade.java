@@ -53,7 +53,7 @@ public class SettlementGroupsFacade implements SettlementGroups {
         Either<GeneralError, List<User>> foundUsers = users.fetchUsers(userIds.stream().toList());
         SettlementGroup settlementGroup = new SettlementGroup(groupId, title);
 
-        return foundUsers.map(users -> users.stream()
+        return foundUsers.map(userList -> userList.stream()
                 .map(user -> new Participant(groupId, user.userId(), user.firstName(), user.lastName(), PENDING)).toList())
                 .flatMap(participantRepository::save)
                 .flatMap(participants -> settlementGroupRepository.save(settlementGroup))

@@ -12,7 +12,7 @@ public record Participant(UUID groupId, UUID userId, String firstName, String la
         return new Participant(this.groupId, this.userId, this.firstName, this.lastName, SettlementStatus.SETTLED);
     }
 
-    public Participant withStatus(SettlementStatus status) {
-        return new Participant(this.groupId, this.userId, this.firstName, this.lastName, status);
+    public Participant withStatus(SettlementStatus newStatus) {
+        return new Participant(this.groupId, this.userId, this.firstName, this.lastName, newStatus);
     }
 }

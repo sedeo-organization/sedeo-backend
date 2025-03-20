@@ -17,7 +17,8 @@ public record PasswordResetToken(UUID token, UUID userId, String firstName, Stri
     private static final int EXPIRATION_TIME_IN_MINUTES = 5;
 
     public static PasswordResetToken randomUnusedToken(UUID userId, String firstName, String lastName, String email) {
-        return new PasswordResetToken(UUID.randomUUID(), userId, firstName, lastName, email, LocalDateTime.now().plusMinutes(EXPIRATION_TIME_IN_MINUTES), UNUSED);
+        return new PasswordResetToken(UUID.randomUUID(), userId, firstName, lastName, email,
+                LocalDateTime.now().plusMinutes(EXPIRATION_TIME_IN_MINUTES), UNUSED);
     }
 
     public Either<GeneralError, PasswordResetToken> useToken() {
