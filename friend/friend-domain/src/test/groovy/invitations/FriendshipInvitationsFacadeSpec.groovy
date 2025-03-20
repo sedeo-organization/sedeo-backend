@@ -1,18 +1,18 @@
 package invitations
 
 
-import com.sedeo.friend.db.FriendshipInvitationRepository
-import com.sedeo.friend.db.FriendshipRepository
-import com.sedeo.friend.facade.FriendshipInvitationsFacade
-import com.sedeo.friend.facade.Friendships
-import com.sedeo.friend.model.FriendshipInvitation
-import com.sedeo.friend.model.InvitationStatus
-import com.sedeo.friend.model.error.FriendError
+import com.sedeo.domain.friend.db.FriendshipInvitationRepository
+import com.sedeo.domain.friend.db.FriendshipRepository
+import com.sedeo.domain.friend.facade.FriendshipInvitationsFacade
+import com.sedeo.domain.friend.facade.Friendships
+import com.sedeo.domain.friend.model.FriendshipInvitation
+import com.sedeo.domain.friend.model.InvitationStatus
+import com.sedeo.domain.friend.model.error.FriendError
 import io.vavr.control.Either
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.sedeo.friend.model.InvitationStatus.PENDING
+import static com.sedeo.domain.friend.model.InvitationStatus.PENDING
 
 class FriendshipInvitationsFacadeSpec extends Specification {
 

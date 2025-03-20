@@ -2,7 +2,7 @@ package com.sedeo.friend.controllers;
 
 import com.sedeo.common.error.ErrorResponse;
 import com.sedeo.common.error.GeneralError;
-import com.sedeo.friend.model.error.FriendError;
+import com.sedeo.domain.friend.model.error.FriendError;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseMapper {

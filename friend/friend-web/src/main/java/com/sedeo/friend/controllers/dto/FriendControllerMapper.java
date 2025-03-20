@@ -1,7 +1,7 @@
 package com.sedeo.friend.controllers.dto;
 
-import com.sedeo.friend.model.DetailedFriendshipInvitation;
-import com.sedeo.friend.model.Friend;
+import com.sedeo.domain.friend.model.DetailedFriendshipInvitation;
+import com.sedeo.domain.friend.model.Friend;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

@@ -1,13 +1,13 @@
 package com.sedeo.settlement.controllers.dto;
 
-import com.sedeo.settlement.model.Exchange;
-import com.sedeo.settlement.model.Participant;
-import com.sedeo.settlement.model.Settlement;
-import com.sedeo.settlement.model.SettlementGroup;
-import com.sedeo.settlement.model.view.DetailedSettlement;
-import com.sedeo.settlement.model.view.ExchangeWithParticipants;
-import com.sedeo.settlement.model.view.SimpleSettlement;
-import com.sedeo.settlement.model.view.SummaryExchange;
+import com.sedeo.domain.settlement.model.Exchange;
+import com.sedeo.domain.settlement.model.Participant;
+import com.sedeo.domain.settlement.model.Settlement;
+import com.sedeo.domain.settlement.model.SettlementGroup;
+import com.sedeo.domain.settlement.model.view.DetailedSettlement;
+import com.sedeo.domain.settlement.model.view.ExchangeWithParticipants;
+import com.sedeo.domain.settlement.model.view.SimpleSettlement;
+import com.sedeo.domain.settlement.model.view.SummaryExchange;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
