@@ -59,11 +59,11 @@
 		<cucumber-java.version>7.14.0</cucumber-java.version>
 		<surefire-junit4.version>3.1.2</surefire-junit4.version>
 		<archunit-junit4.version>1.2.1</archunit-junit4.version>
-
-		<dockerfile.tag>${project.version}</dockerfile.tag>
-		<repository.dir>sedeo</repository.dir>
 		<maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
 		<checkstyle.version>10.21.4</checkstyle.version>
+
+		<dockerfile.tag>${project.version}</dockerfile.tag>
+		<repository.dir>sedeo.azurecr.io/sedeo</repository.dir>
 	</properties>
 
 	<dependencies>
