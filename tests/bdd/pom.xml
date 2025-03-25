@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.sedeo</groupId>
         <artifactId>tests</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>bdd</artifactId>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.sedeo</groupId>
             <artifactId>authentication-web</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.sedeo</groupId>
             <artifactId>user-web</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

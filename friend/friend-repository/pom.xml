@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.sedeo</groupId>
         <artifactId>friend</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>friend-repository</artifactId>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.sedeo</groupId>
             <artifactId>friend-domain</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
