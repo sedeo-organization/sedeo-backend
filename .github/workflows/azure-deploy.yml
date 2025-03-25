@@ -46,8 +46,7 @@ jobs:
           ./mvnw package -Dskip.ut=true
           DOCKER_IMAGE_NAME=$(cat main-web/target/docker/image-name)
           docker push $DOCKER_IMAGE_NAME
-          DOCKER_IMAGE_SHA=$(docker inspect --format='{{index .RepoDigests 0}}' $DOCKER_IMAGE_NAME)
-          echo "image=$DOCKER_IMAGE_SHA" >> $GITHUB_OUTPUT
+          echo "image=$DOCKER_IMAGE_NAME" >> $GITHUB_OUTPUT
 
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
