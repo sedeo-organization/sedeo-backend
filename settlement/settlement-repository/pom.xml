@@ -8,7 +8,7 @@
         <dependency>
             <groupId>com.sedeo</groupId>
             <artifactId>settlement-domain</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -29,7 +29,7 @@
     <parent>
         <groupId>com.sedeo</groupId>
         <artifactId>settlement</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>settlement-repository</artifactId>
